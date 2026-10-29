@@ -24,12 +24,12 @@ export function DesignBoards({ boards }: { boards: Board[] }) {
   return (
     <section
       aria-labelledby="boards-heading"
-      className="px-gutter section-y border-t border-ink/10 bg-paper text-ink"
+      className="band-ink-2 border-t border-paper/10 px-gutter section-y text-paper"
     >
       <Reveal>
-        <p className="mono-label text-ink/50">( Design boards )</p>
+        <p className="mono-label text-paper/50">( Design boards )</p>
         <h2 id="boards-heading" className="font-display mt-6 text-6xl md:text-7xl">
-          Flat work<span className="text-signal">.</span>
+          Flat work<span className="text-signal neon-text">.</span>
         </h2>
       </Reveal>
 
@@ -86,7 +86,7 @@ function BoardCard({ board }: { board: Board }) {
         </h3>
         <div className="flex flex-wrap gap-1.5">
           {board.tags.map((t) => (
-            <span key={t} className="mono-label rounded-[20px] border border-ink/20 px-2.5 py-1 text-ink/60">
+            <span key={t} className="mono-label rounded-[20px] border border-paper/20 px-2.5 py-1 text-paper/60">
               {t}
             </span>
           ))}
@@ -101,14 +101,14 @@ function BoardCard({ board }: { board: Board }) {
                 <span
                   key={s.hex}
                   title={`${s.name} ${s.hex}`}
-                  className="h-4 w-4 rounded-full border border-ink/15"
+                  className="h-4 w-4 rounded-full border border-paper/30"
                   style={{ backgroundColor: s.hex }}
                 />
               ))}
             </div>
           )}
           {board.typefaces && (
-            <p className="mono-label text-ink/50">Type — {board.typefaces.join(" / ")}</p>
+            <p className="mono-label text-paper/50">Type — {board.typefaces.join(" / ")}</p>
           )}
         </div>
       )}

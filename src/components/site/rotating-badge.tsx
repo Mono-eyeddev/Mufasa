@@ -23,7 +23,7 @@ export function RotatingBadge({ hasFilm = false, targetId = "work" }: { hasFilm?
       type="button"
       onClick={handleClick}
       aria-label={hasFilm ? "Open showreel" : "Scroll to selected work"}
-      className="relative block h-24 w-24 md:h-28 md:w-28 rounded-full text-ink hover:text-signal transition-colors"
+      className="relative block h-24 w-24 md:h-28 md:w-28 rounded-full text-paper transition-colors hover:text-signal hover:drop-shadow-[0_0_12px_rgba(204,255,0,0.4)]"
     >
       <svg
         viewBox="0 0 100 100"

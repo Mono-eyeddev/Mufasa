@@ -34,7 +34,7 @@ export function FilmReel({ films }: { films: Project[] }) {
         <Reveal>
           <p className="mono-label text-paper/50">( Film reel )</p>
           <h2 id="film-heading" className="font-display mt-6 text-6xl md:text-7xl">
-            Moving image<span className="text-signal">.</span>
+            Moving image<span className="text-signal neon-text">.</span>
           </h2>
         </Reveal>
         <Reveal delay={0.08} className="flex gap-2">
@@ -42,7 +42,7 @@ export function FilmReel({ films }: { films: Project[] }) {
             type="button"
             onClick={() => scrollBy(-1)}
             aria-label="Scroll reel back"
-            className="grid h-11 w-11 place-items-center rounded-[20px] border border-paper/25 text-paper hover:border-signal hover:text-signal"
+            className="grid h-11 w-11 place-items-center rounded-[20px] border border-paper/25 text-paper hover:border-signal hover:text-signal hover:drop-shadow-[0_0_10px_rgba(204,255,0,0.45)]"
           >
             ←
           </button>
@@ -50,7 +50,7 @@ export function FilmReel({ films }: { films: Project[] }) {
             type="button"
             onClick={() => scrollBy(1)}
             aria-label="Scroll reel forward"
-            className="grid h-11 w-11 place-items-center rounded-[20px] border border-paper/25 text-paper hover:border-signal hover:text-signal"
+            className="grid h-11 w-11 place-items-center rounded-[20px] border border-paper/25 text-paper hover:border-signal hover:text-signal hover:drop-shadow-[0_0_10px_rgba(204,255,0,0.45)]"
           >
             →
           </button>
@@ -72,7 +72,7 @@ export function FilmReel({ films }: { films: Project[] }) {
           >
             <p className="mono-label text-paper/50">MUFASA® — Reel</p>
             <p className="font-display text-4xl leading-[0.9] md:text-5xl">
-              Welcome<span className="text-signal">.</span>
+              Welcome<span className="text-signal neon-text">.</span>
               <br />
               <span className="serif-accent lowercase tracking-normal">take a look around</span>
             </p>
@@ -135,7 +135,7 @@ export function ContactSheet({ frames }: { frames: { media: import("@/content/ty
         <Reveal>
           <p className="mono-label text-paper/50">( Contact sheet )</p>
           <h2 id="sheet-heading" className="font-display mt-6 text-6xl md:text-7xl">
-            Every frame<span className="text-signal">.</span>
+            Every frame<span className="text-signal neon-text">.</span>
           </h2>
           <p className="mt-6 max-w-[52ch] text-[15px] leading-relaxed text-paper/70">
             The roll, uncut — stills and outtakes from recent shoots and sets. Click a frame to

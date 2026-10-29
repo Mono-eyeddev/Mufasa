@@ -27,7 +27,7 @@ export default function OpengraphImage() {
         <div style={{ display: "flex", flexDirection: "column" }}>
           <div style={{ display: "flex", fontSize: 170, fontWeight: 900, lineHeight: 0.9, letterSpacing: "-0.02em", textTransform: "uppercase" }}>
             <span>MUFASA</span>
-            <span style={{ color: "#FF3B1F", fontSize: 60, marginTop: 24 }}>®</span>
+            <span style={{ color: "#CCFF00", fontSize: 60, marginTop: 24 }}>®</span>
           </div>
           <div style={{ display: "flex", fontSize: 34, marginTop: 24, opacity: 0.8 }}>
             Photography · Design · Film
@@ -35,7 +35,7 @@ export default function OpengraphImage() {
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", fontSize: 20, letterSpacing: "0.08em", opacity: 0.5 }}>
           <span>{new URL(siteConfig.url).host}</span>
-          <span style={{ color: "#FF3B1F" }}>*</span>
+          <span style={{ color: "#CCFF00" }}>*</span>
         </div>
       </div>
     ),

@@ -87,7 +87,7 @@ export function Contact({ providerConfigured }: { providerConfigured: boolean })
               <span className="font-display px-6 text-[11vw] leading-none md:text-[7vw]">
                 Let&apos;s make something
               </span>
-              <span className="text-signal text-[4vw] md:text-[2.5vw]">✱</span>
+              <span className="text-signal neon-text text-[4vw] md:text-[2.5vw]">✱</span>
             </span>
           ))}
         </div>
@@ -100,7 +100,7 @@ export function Contact({ providerConfigured }: { providerConfigured: boolean })
         <Reveal className="md:col-span-5">
           <p className="mono-label text-paper/50">( Contact )</p>
           <h3 className="font-display mt-6 text-5xl leading-[0.9] md:text-6xl">
-            Start a project<span className="text-signal">.</span>
+            Start a project<span className="text-signal neon-text">.</span>
           </h3>
           <p className="mt-6 max-w-[40ch] text-[16px] leading-relaxed text-paper/75">
             Photography, design, film, identity or a campaign — write a line about what you need
@@ -118,7 +118,7 @@ export function Contact({ providerConfigured }: { providerConfigured: boolean })
           </div>
 
           {siteConfig.availableForCommissions && (
-            <p className="mono-label mt-8 inline-block rounded-[20px] border border-signal px-3.5 py-2 text-signal">
+            <p className="mono-label neon-box mt-8 inline-block rounded-[20px] border border-signal px-3.5 py-2 text-signal">
               ✱ Available for commissions
             </p>
           )}
@@ -248,7 +248,7 @@ export function Contact({ providerConfigured }: { providerConfigured: boolean })
               <button
                 type="submit"
                 disabled={serverState.status === "sending"}
-                className="mono-label min-h-[44px] rounded-[20px] bg-paper px-6 text-ink transition-colors hover:bg-signal hover:text-paper disabled:opacity-50"
+                className="mono-label min-h-[44px] rounded-[20px] bg-paper px-6 text-ink transition-colors hover:bg-signal hover:text-ink disabled:opacity-50"
               >
                 {serverState.status === "sending" ? "Sending…" : "Send it →"}
               </button>
@@ -258,7 +258,7 @@ export function Contact({ providerConfigured }: { providerConfigured: boolean })
                   role="status"
                   initial={reduce ? false : { opacity: 0, y: 6 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="mono-label text-paper/80"
+                  className="mono-label neon-text-soft text-signal"
                 >
                   ✱ Sent — you&apos;ll hear back soon.
                 </motion.p>
@@ -296,7 +296,7 @@ export function FooterWordmark({ tone = "ink" }: { tone?: "ink" | "paper" }) {
           MUFAS
           <span className="relative inline-block align-bottom">
             <span
-              className={`absolute text-[0.3em] text-signal`}
+              className={`absolute text-[0.3em] text-signal neon-text-soft`}
               style={{ top: "0.04em", right: "-0.32em", lineHeight: 1 }}
             >
               ®

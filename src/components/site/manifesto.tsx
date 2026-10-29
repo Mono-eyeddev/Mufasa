@@ -17,22 +17,22 @@ interface Lens {
 
 export function Manifesto({ lenses }: { lenses: Lens[] }) {
   return (
-    <section aria-labelledby="manifesto-heading" className="px-gutter section-y bg-paper text-ink">
+    <section aria-labelledby="manifesto-heading" className="band-ink-2 px-gutter section-y text-paper">
       <Reveal>
-        <p className="mono-label text-ink/50">( Manifesto )</p>
+        <p className="mono-label text-paper/50">( Manifesto )</p>
         <h2
           id="manifesto-heading"
           className="mt-8 font-display text-[17vw] leading-[0.88] sm:text-[13vw] lg:text-[9.5vw]"
         >
-          Photography<span className="text-signal">.</span>
+          Photography<span className="text-signal neon-text">.</span>
           <br />
           <span className="serif-accent font-normal lowercase tracking-normal">and </span>
-          Design<span className="text-signal">.</span>
+          Design<span className="text-signal neon-text">.</span>
           <br />
           <span className="serif-accent font-normal lowercase tracking-normal">and </span>
-          Film<span className="text-signal">.</span>
+          Film<span className="text-signal neon-text">.</span>
         </h2>
-        <p className="mt-10 max-w-[52ch] text-[17px] leading-relaxed text-ink/80">
+        <p className="mt-10 max-w-[52ch] text-[17px] leading-relaxed text-paper/75">
           One studio, three ways of working. Pictures are made with light, identities with type
           and grid, films with time — the same eye runs through all of it.
         </p>
@@ -116,7 +116,7 @@ function LensPanel({
     >
       {/* media */}
       {isFilm ? (
-        <div className="absolute inset-0 bg-ink">
+        <div className="absolute inset-0 border border-paper/10 bg-ink">
           {/* letterboxed 2.39:1 still */}
           <div className="absolute inset-x-0 top-1/2 aspect-[2.39/1] w-full -translate-y-1/2 overflow-hidden">
             <Image
@@ -130,7 +130,7 @@ function LensPanel({
             />
           </div>
           <span className="mono-label absolute bottom-3 right-4 text-paper/90 tabular-nums">
-            <span className="blink-soft mr-2 text-signal">●</span>TC {timecode}
+            <span className="blink-soft mr-2 text-signal neon-text-soft">●</span>TC {timecode}
           </span>
         </div>
       ) : lens.discipline === "graphic-design" ? (

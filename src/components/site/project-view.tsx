@@ -40,18 +40,18 @@ export function ProjectView({ project, next }: { project: Project; next: Project
       initial={reduce ? false : { opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.45, ease: "easeOut" }}
-      className="bg-paper text-ink"
+      className="bg-ink text-paper"
     >
       {/* ---------- cover ---------- */}
       <header className="px-gutter pt-28 md:pt-36">
-        <p className="mono-label text-ink/50">
+        <p className="mono-label text-paper/50">
           <Link href="/work" className="link-underline">Archive</Link>
           <span aria-hidden="true"> ✱ </span>
           {DISCIPLINE_INDEX[project.discipline[0]]} — {project.discipline.map((d) => DISCIPLINE_LABEL[d]).join(" · ")}
         </p>
         <h1 className="font-display mt-6 text-[15vw] leading-[0.86] md:text-[9vw]">
           {project.title}
-          <span className="text-signal">.</span>
+          <span className="text-signal neon-text">.</span>
         </h1>
 
         <div className={`relative mt-10 overflow-hidden rounded-[2px] bg-graphite/5 md:mt-14 ${coverRatioClass}`}>
@@ -72,7 +72,7 @@ export function ProjectView({ project, next }: { project: Project; next: Project
       {/* ---------- summary + sticky meta rail ---------- */}
       <section className="px-gutter mt-14 grid grid-cols-1 gap-10 md:mt-20 md:grid-cols-12">
         <div className="md:col-span-7">
-          <p className="max-w-[52ch] text-xl leading-relaxed text-ink/85 md:text-2xl">{project.summary}</p>
+          <p className="max-w-[52ch] text-xl leading-relaxed text-paper/85 md:text-2xl">{project.summary}</p>
         </div>
         <aside className="md:col-span-4 md:col-start-9">
           <div className="md:sticky md:top-24">
@@ -110,11 +110,11 @@ function MetaRail({ project, template }: { project: Project; template: Template 
   }
 
   return (
-    <dl className="border-t border-ink/15">
+    <dl className="border-t border-paper/15">
       {rows.map((r) => (
-        <div key={r.label} className="flex items-baseline justify-between gap-4 border-b border-ink/15 py-3.5">
-          <dt className="mono-label shrink-0 text-ink/45">{r.label}</dt>
-          <dd className="text-right text-[14px] leading-snug text-ink/85">{r.value}</dd>
+        <div key={r.label} className="flex items-baseline justify-between gap-4 border-b border-paper/15 py-3.5">
+          <dt className="mono-label shrink-0 text-paper/45">{r.label}</dt>
+          <dd className="text-right text-[14px] leading-snug text-paper/85">{r.value}</dd>
         </div>
       ))}
     </dl>
@@ -146,7 +146,7 @@ function BlockSequence({ project, template }: { project: Project; template: Temp
             return (
               <div key={i} className="mx-auto max-w-[60ch]">
                 {block.heading && <h2 className="font-display text-3xl md:text-4xl mb-4">{block.heading}</h2>}
-                <p className="text-[17px] leading-relaxed text-ink/80">{block.body}</p>
+                <p className="text-[17px] leading-relaxed text-paper/80">{block.body}</p>
               </div>
             );
 
@@ -173,7 +173,7 @@ function BlockSequence({ project, template }: { project: Project; template: Temp
                   {template === "design" && <CropMarks />}
                 </button>
                 {block.caption && (
-                  <figcaption className="mono-label mt-3 text-ink/50">{block.caption}</figcaption>
+                  <figcaption className="mono-label mt-3 text-paper/50">{block.caption}</figcaption>
                 )}
               </figure>
             );
@@ -254,7 +254,7 @@ function BlockSequence({ project, template }: { project: Project; template: Temp
                   />
                   {template === "design" && <CropMarks />}
                 </button>
-                <figcaption className="mono-label mt-3 text-ink/50">{block.caption}</figcaption>
+                <figcaption className="mono-label mt-3 text-paper/50">{block.caption}</figcaption>
               </figure>
             );
 
@@ -270,7 +270,7 @@ function BlockSequence({ project, template }: { project: Project; template: Temp
                   className="h-full w-full object-cover"
                   aria-label={block.media.alt}
                 />
-                {block.caption && <figcaption className="mono-label mt-3 text-ink/50">{block.caption}</figcaption>}
+                {block.caption && <figcaption className="mono-label mt-3 text-paper/50">{block.caption}</figcaption>}
               </figure>
             );
 
@@ -306,7 +306,7 @@ function BlockSequence({ project, template }: { project: Project; template: Temp
 
       {/* film template — screener note under the sequence */}
       {template === "film" && project.screenerNote && (
-        <p className="mono-label mx-auto max-w-[60ch] border border-ink/20 rounded-[2px] px-4 py-3 text-ink/60 text-center">
+        <p className="mono-label mx-auto max-w-[60ch] rounded-[2px] border border-paper/20 px-4 py-3 text-center text-paper/60">
           ( {project.screenerNote} )
         </p>
       )}
@@ -328,17 +328,17 @@ function NextProject({ next }: { next: Project }) {
   return (
     <Link
       href={`/work/${next.slug}`}
-      className="group mt-24 block border-t border-ink/15 md:mt-36"
+      className="group mt-24 block border-t border-paper/15 md:mt-36"
       aria-label={`Next project: ${next.title}`}
     >
       <div className="px-gutter grid grid-cols-1 items-center gap-8 py-14 md:grid-cols-12 md:py-20">
         <div className="md:col-span-7">
-          <p className="mono-label text-ink/45">Next project</p>
+          <p className="mono-label text-paper/45">Next project</p>
           <p className="font-display mt-4 text-[13vw] leading-[0.86] transition-transform duration-700 ease-[cubic-bezier(.2,.8,.2,1)] group-hover:translate-x-3 md:text-[7vw]">
             {next.title}
-            <span className="text-signal">.</span>
+            <span className="text-signal neon-text">.</span>
           </p>
-          <p className="mono-label mt-4 text-ink/50">
+          <p className="mono-label mt-4 text-paper/50">
             {next.discipline.map((d) => DISCIPLINE_LABEL[d]).join(" · ")}
           </p>
         </div>

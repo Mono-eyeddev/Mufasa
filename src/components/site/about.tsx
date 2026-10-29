@@ -14,7 +14,7 @@ export function About({ portrait }: { portrait: Media }) {
     <section
       id="about"
       aria-labelledby="about-heading"
-      className="px-gutter section-y border-t border-ink/10 bg-paper text-ink"
+      className="band-ink-2 border-t border-paper/10 px-gutter section-y text-paper"
     >
       <div className="grid grid-cols-1 gap-12 md:grid-cols-12 md:gap-6">
         <Reveal className="md:col-span-5">
@@ -32,7 +32,7 @@ export function About({ portrait }: { portrait: Media }) {
               />
               <CropMarks />
             </div>
-            <p className="mono-label mt-4 text-center text-ink/50">
+            <p className="mono-label mt-4 text-center text-paper/50">
               ( Victor Oginga — MUFASA® )
             </p>
           </div>
@@ -40,11 +40,11 @@ export function About({ portrait }: { portrait: Media }) {
 
         <div className="md:col-span-6 md:col-start-7">
           <Reveal>
-            <p className="mono-label text-ink/50">( About )</p>
+            <p className="mono-label text-paper/50">( About )</p>
             <h2 id="about-heading" className="font-display mt-6 text-5xl md:text-6xl">
-              The name on the contact sheet<span className="text-signal">.</span>
+              The name on the contact sheet<span className="text-signal neon-text">.</span>
             </h2>
-            <div className="mt-8 max-w-[54ch] space-y-5 text-[17px] leading-relaxed text-ink/80">
+            <div className="mt-8 max-w-[54ch] space-y-5 text-[17px] leading-relaxed text-paper/75">
               <p>
                 Victor Oginga works under the name MUFASA® — photographer, graphic designer and
                 filmmaker. The studio's output moves between stills, identities and moving
@@ -56,20 +56,20 @@ export function About({ portrait }: { portrait: Media }) {
               </p>
             </div>
 
-            <dl className="mt-10 space-y-3 border-t border-ink/15 pt-6">
+            <dl className="mt-10 space-y-3 border-t border-paper/15 pt-6">
               <div className="flex items-baseline gap-4">
-                <dt className="mono-label w-24 shrink-0 text-ink/45">Disciplines</dt>
-                <dd className="text-[15px] text-ink/80">Photography · Graphic Design · Film · Branding · Creative Direction</dd>
+                <dt className="mono-label w-24 shrink-0 text-paper/45">Disciplines</dt>
+                <dd className="text-[15px] text-paper/80">Photography · Graphic Design · Film · Branding · Creative Direction</dd>
               </div>
               <div className="flex items-baseline gap-4">
-                <dt className="mono-label w-24 shrink-0 text-ink/45">Based</dt>
-                <dd className="text-[15px] text-ink/80">{siteConfig.location ?? "Location on request"}</dd>
+                <dt className="mono-label w-24 shrink-0 text-paper/45">Based</dt>
+                <dd className="text-[15px] text-paper/80">{siteConfig.location ?? "Location on request"}</dd>
               </div>
               <div className="flex items-baseline gap-4">
-                <dt className="mono-label w-24 shrink-0 text-ink/45">Status</dt>
-                <dd className="text-[15px] text-ink/80">
+                <dt className="mono-label w-24 shrink-0 text-paper/45">Status</dt>
+                <dd className="text-[15px] text-paper/80">
                   {siteConfig.availableForCommissions ? (
-                    <span className="text-signal">✱ Available for commissions</span>
+                    <span className="text-signal neon-text-soft">✱ Available for commissions</span>
                   ) : (
                     "Booking by enquiry"
                   )}

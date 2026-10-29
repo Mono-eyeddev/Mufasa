@@ -40,7 +40,7 @@ export function WorkArchive({ projects, initialDiscipline }: { projects: Project
         <div
           role="group"
           aria-label="View mode"
-          className="flex shrink-0 rounded-[20px] border border-ink/20 p-1"
+          className="flex shrink-0 rounded-[20px] border border-paper/20 p-1"
         >
           {(["grid", "list"] as const).map((v) => (
             <button
@@ -49,7 +49,7 @@ export function WorkArchive({ projects, initialDiscipline }: { projects: Project
               aria-pressed={view === v}
               onClick={() => setView(v)}
               className={`mono-label min-h-[36px] rounded-[16px] px-4 transition-colors ${
-                view === v ? "bg-ink text-paper" : "text-ink/60 hover:text-ink"
+                view === v ? "bg-signal text-ink" : "text-paper/60 hover:text-paper"
               }`}
             >
               {v === "grid" ? "Grid" : "List"}
@@ -58,7 +58,7 @@ export function WorkArchive({ projects, initialDiscipline }: { projects: Project
         </div>
       </div>
 
-      <p className="mono-label mt-6 text-ink/45" role="status">
+      <p className="mono-label mt-6 text-paper/45" role="status">
         {String(filtered.length).padStart(2, "0")} project{filtered.length === 1 ? "" : "s"} shown
       </p>
 
@@ -110,7 +110,7 @@ export function WorkArchive({ projects, initialDiscipline }: { projects: Project
                       />
                       <CropMarks className="opacity-0 transition-opacity group-hover:opacity-100" />
                     </div>
-                    <p className="mono-label mt-3 text-ink/50">
+                    <p className="mono-label mt-3 text-paper/50">
                       {DISCIPLINE_INDEX[p.discipline[0]]} — {p.discipline.map((d) => DISCIPLINE_LABEL[d]).join(" · ")}
                       {p.year ? ` — ${p.year}` : ""}
                     </p>
@@ -128,7 +128,7 @@ export function WorkArchive({ projects, initialDiscipline }: { projects: Project
       {/* ---------- LIST VIEW ---------- */}
       {view === "list" && (
         <div className="mt-10 relative">
-          <ul className="border-t border-ink/15">
+          <ul className="border-t border-paper/15">
             <AnimatePresence initial={false}>
               {filtered.map((p, i) => (
                 <motion.li
@@ -138,7 +138,7 @@ export function WorkArchive({ projects, initialDiscipline }: { projects: Project
                   animate={{ opacity: 1, y: 0 }}
                   exit={reduce ? { opacity: 0 } : { opacity: 0, y: -8 }}
                   transition={{ duration: 0.3 }}
-                  className="border-b border-ink/15"
+                  className="border-b border-paper/15"
                   onMouseEnter={() => setHoveredSlug(p.slug)}
                   onMouseLeave={() => setHoveredSlug(null)}
                 >
@@ -147,14 +147,14 @@ export function WorkArchive({ projects, initialDiscipline }: { projects: Project
                     className="group grid grid-cols-[2.5rem_1fr_auto] items-baseline gap-4 py-5 md:grid-cols-[3rem_1fr_10rem_6rem]"
                     aria-label={`${p.title} — ${DISCIPLINE_LABEL[p.discipline[0]]}`}
                   >
-                    <span className="mono-label text-ink/40">{String(i + 1).padStart(2, "0")}</span>
+                    <span className="mono-label text-paper/40">{String(i + 1).padStart(2, "0")}</span>
                     <span className="font-display text-3xl leading-[0.95] transition-transform duration-500 group-hover:translate-x-2 md:text-5xl">
                       <span className="link-underline-accent decoration-2">{p.title}</span>
                     </span>
-                    <span className="mono-label hidden text-ink/50 md:block">
+                    <span className="mono-label hidden text-paper/50 md:block">
                       {p.discipline.map((d) => DISCIPLINE_LABEL[d]).join(" · ")}
                     </span>
-                    <span aria-hidden="true" className="mono-label text-right text-ink/30 group-hover:text-signal">
+                    <span aria-hidden="true" className="mono-label text-right text-paper/30 group-hover:text-signal">
                       →
                     </span>
                   </Link>
@@ -176,7 +176,7 @@ export function WorkArchive({ projects, initialDiscipline }: { projects: Project
                 sizes="24rem"
                 className="animate-[hero-fade-in_0.3s_ease] object-cover"
               />
-              <CropMarks onInk />
+              <CropMarks />
             </div>
           )}
         </div>

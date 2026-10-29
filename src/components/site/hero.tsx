@@ -44,23 +44,23 @@ export function Hero({ slides }: { slides: HeroSlide[] }) {
       aria-label="Introduction"
       onMouseEnter={() => (paused.current = true)}
       onMouseLeave={() => (paused.current = false)}
-      className="relative flex h-[100svh] min-h-[640px] flex-col overflow-hidden bg-paper"
+      className="band-ink relative flex h-[100svh] min-h-[640px] flex-col overflow-hidden"
     >
       {/* left column — eyebrow + disciplines (desktop) */}
       <div className="px-gutter absolute left-0 top-[19vh] z-30 hidden lg:block">
-        <p className="mono-label text-ink/60">Victor Oginga</p>
+        <p className="mono-label text-paper/60">Victor Oginga</p>
         <ul className="mt-5 space-y-2">
           {slides.map((s, i) => (
             <li key={s.label} className="mono-label flex items-center gap-3">
-              <span className={i === active ? "text-signal" : "text-ink/40"}>{s.index}</span>
-              <span className={i === active ? "text-ink" : "text-ink/60"}>{s.label}</span>
+              <span className={i === active ? "text-signal neon-text-soft" : "text-paper/35"}>{s.index}</span>
+              <span className={i === active ? "text-paper" : "text-paper/55"}>{s.label}</span>
             </li>
           ))}
         </ul>
       </div>
 
       {/* right column — one line (desktop) */}
-      <p className="px-gutter absolute right-0 top-[19vh] z-30 hidden max-w-[220px] text-right text-[15px] leading-snug text-ink/80 lg:block">
+      <p className="px-gutter absolute right-0 top-[19vh] z-30 hidden max-w-[220px] text-right text-[15px] leading-snug text-paper/80 lg:block">
         Images, identities and&nbsp;moving pictures.
       </p>
 
@@ -69,7 +69,7 @@ export function Hero({ slides }: { slides: HeroSlide[] }) {
         style={reduce ? undefined : { y: parallax }}
         className="absolute left-1/2 top-[12vh] z-10 w-[78vw] -translate-x-1/2 md:w-[60vw] lg:w-[34vw]"
       >
-        <div className="relative aspect-[4/5] overflow-hidden rounded-[2px] bg-ink/5">
+        <div className="relative aspect-[4/5] overflow-hidden rounded-[2px] bg-paper/5 ring-1 ring-inset ring-paper/10">
           {slides.map((s, i) => (
             <div
               key={s.src}
@@ -101,7 +101,7 @@ export function Hero({ slides }: { slides: HeroSlide[] }) {
 
         {/* caption chip — current discipline */}
         <div className="absolute -bottom-4 left-1/2 z-30 -translate-x-1/2">
-          <p className="mono-label whitespace-nowrap rounded-[20px] border border-ink/15 bg-paper/90 px-3.5 py-2 text-ink backdrop-blur-sm">
+          <p className="mono-label neon-box whitespace-nowrap rounded-[20px] border border-signal/40 bg-ink/80 px-3.5 py-2 text-paper backdrop-blur-sm">
             {current.index} {current.label}
           </p>
         </div>
@@ -117,8 +117,8 @@ export function Hero({ slides }: { slides: HeroSlide[] }) {
         <ul className="space-y-1.5">
           {slides.map((s, i) => (
             <li key={s.label} className="mono-label flex items-center gap-3">
-              <span className={i === active ? "text-signal" : "text-ink/40"}>{s.index}</span>
-              <span className={i === active ? "text-ink" : "text-ink/60"}>{s.label}</span>
+              <span className={i === active ? "text-signal neon-text-soft" : "text-paper/35"}>{s.index}</span>
+              <span className={i === active ? "text-paper" : "text-paper/55"}>{s.label}</span>
             </li>
           ))}
         </ul>
@@ -154,7 +154,9 @@ function Wordmark({ className, clip = false }: { className?: string; clip?: bool
     >
       <h1
         aria-label="MUFASA®"
-        className="px-gutter whitespace-nowrap text-center font-display text-[26vw] leading-[0.86] text-ink"
+        className={`px-gutter whitespace-nowrap text-center font-display text-[26vw] leading-[0.86] ${
+          clip ? "text-signal neon-text" : "text-paper"
+        }`}
       >
         {LETTERS.map((l, i) =>
           i < LETTERS.length - 1 ? (

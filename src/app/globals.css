@@ -4,13 +4,14 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  /* ---- MUFASA(R) CONTACT SHEET palette ---- */
+  /* ---- MUFASA(R) ACID DARKROOM palette ---- */
   --color-paper: #ece7dc;
   --color-ink: #0d0c0a;
   --color-bone: #f6f2e9;
   --color-graphite: #2a2824;
-  --color-signal: #ff3b1f;
+  --color-signal: #ccff00;
   --color-paper-dim: #e2dccd;
+  --color-ink-2: #14140f;
 
   /* ---- shadcn compatibility, re-pointed to the palette ---- */
   --color-background: var(--background);
@@ -48,24 +49,24 @@
 }
 
 :root {
-  --background: #ece7dc;
-  --foreground: #0d0c0a;
-  --card: #f6f2e9;
-  --card-foreground: #0d0c0a;
-  --popover: #f6f2e9;
-  --popover-foreground: #0d0c0a;
-  --primary: #0d0c0a;
-  --primary-foreground: #ece7dc;
-  --secondary: #e2dccd;
-  --secondary-foreground: #0d0c0a;
-  --muted: #e2dccd;
-  --muted-foreground: #57534a;
-  --accent: #e2dccd;
-  --accent-foreground: #0d0c0a;
-  --destructive: #ff3b1f;
-  --border: rgba(13, 12, 10, 0.14);
-  --input: rgba(13, 12, 10, 0.2);
-  --ring: #ff3b1f;
+  --background: #0d0c0a;
+  --foreground: #ece7dc;
+  --card: #14140f;
+  --card-foreground: #ece7dc;
+  --popover: #14140f;
+  --popover-foreground: #ece7dc;
+  --primary: #ece7dc;
+  --primary-foreground: #0d0c0a;
+  --secondary: #1d1c16;
+  --secondary-foreground: #ece7dc;
+  --muted: #1d1c16;
+  --muted-foreground: #a39d8f;
+  --accent: #1d1c16;
+  --accent-foreground: #ece7dc;
+  --destructive: #ccff00;
+  --border: rgba(236, 231, 220, 0.14);
+  --input: rgba(236, 231, 220, 0.2);
+  --ring: #ccff00;
   --radius: 2px;
 }
 
@@ -91,8 +92,8 @@ html {
 }
 
 body {
-  background: var(--color-paper);
-  color: var(--color-ink);
+  background: var(--color-ink);
+  color: var(--color-paper);
   font-family: var(--font-body), "Hanken Grotesk", system-ui, sans-serif;
   font-size: 17px;
   line-height: 1.55;
@@ -109,13 +110,46 @@ body {
 
 ::selection {
   background: var(--color-signal);
-  color: var(--color-bone);
+  color: var(--color-ink);
 }
 
 :focus-visible {
   outline: 2px solid var(--color-signal);
   outline-offset: 3px;
   border-radius: 1px;
+}
+
+/* ---------- neon (registered as utilities so variants like group-hover: work) ---------- */
+
+/* glowing lime text — used on ink surfaces only */
+@utility neon-text {
+  text-shadow:
+    0 0 6px rgba(204, 255, 0, 0.5),
+    0 0 22px rgba(204, 255, 0, 0.3),
+    0 0 60px rgba(204, 255, 0, 0.14);
+}
+
+/* quieter glow for small mono labels */
+@utility neon-text-soft {
+  text-shadow:
+    0 0 8px rgba(204, 255, 0, 0.45),
+    0 0 20px rgba(204, 255, 0, 0.18);
+}
+
+/* glowing element edge — pills, chips, active frames */
+@utility neon-box {
+  box-shadow:
+    0 0 0 1px rgba(204, 255, 0, 0.45),
+    0 0 16px rgba(204, 255, 0, 0.28),
+    0 0 44px rgba(204, 255, 0, 0.12);
+}
+
+/* backlit light-table edge for frames */
+@utility neon-backlit {
+  box-shadow:
+    inset 0 0 0 1px rgba(204, 255, 0, 0.55),
+    0 0 22px rgba(204, 255, 0, 0.25),
+    0 0 60px rgba(204, 255, 0, 0.1);
 }
 
 /* ---------- typography helpers ---------- */
@@ -173,11 +207,9 @@ body {
   position: absolute;
   width: 14px;
   height: 14px;
-  border-color: var(--color-ink);
-  opacity: 0.85;
-}
-.crop-marks-on-ink > span {
-  border-color: var(--color-paper);
+  border-color: #ece7dc;
+  mix-blend-mode: difference; /* self-adaptive: reads on ink, bone and photography alike */
+  opacity: 0.9;
 }
 .crop-marks > span:nth-child(1) {
   top: 0;
@@ -255,10 +287,15 @@ body {
   background-size: 0% 2px;
   background-position: 0 100%;
   background-repeat: no-repeat;
-  transition: background-size 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), color 0.35s;
+  transition: background-size 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), color 0.35s, text-shadow 0.35s;
 }
 .link-underline-accent:hover {
   background-size: 100% 2px;
+}
+
+/* dark-surface variant: lime sweep + a soft neon lift on the label */
+.link-underline-neon:hover {
+  text-shadow: 0 0 14px rgba(204, 255, 0, 0.35);
 }
 
 /* wordmark letter rise (hero load) */
@@ -327,9 +364,17 @@ body {
   opacity: 0.15;
 }
 
-/* darkroom band texture — faint grain via gradient, no images */
+/* darkroom band — faint lime ambience + hair-thin scanlines, no images */
 .band-ink {
   background:
-    radial-gradient(1200px 500px at 70% -10%, rgba(255, 59, 31, 0.05), transparent 60%),
+    radial-gradient(1200px 500px at 70% -10%, rgba(204, 255, 0, 0.06), transparent 60%),
+    repeating-linear-gradient(0deg, rgba(236, 231, 220, 0.014) 0 1px, transparent 1px 3px),
     #0d0c0a;
+}
+
+/* lifted darkroom band — slightly raised panel tone */
+.band-ink-2 {
+  background:
+    radial-gradient(900px 420px at 20% 0%, rgba(204, 255, 0, 0.045), transparent 55%),
+    #121210;
 }

@@ -72,7 +72,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#ECE7DC",
+  themeColor: "#0D0C0A",
   width: "device-width",
   initialScale: 1,
 };
@@ -102,11 +102,11 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${display.variable} ${serifAccent.variable} ${body.variable} ${mono.variable} antialiased bg-paper text-ink`}
+        className={`${display.variable} ${serifAccent.variable} ${body.variable} ${mono.variable} antialiased bg-ink text-paper`}
       >
         <a
           href="#main"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:bg-ink focus:text-paper focus:px-4 focus:py-2 mono-label"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:bg-signal focus:text-ink focus:px-4 focus:py-2 mono-label"
         >
           Skip to content
         </a>

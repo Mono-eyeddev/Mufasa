@@ -188,7 +188,7 @@ export function ContactSheetFrame({
       aria-label={`Open frame ${frameNo} — ${media.alt}`}
     >
       <div
-        className="relative w-full overflow-hidden rounded-[2px] bg-paper/5"
+        className="relative w-full overflow-hidden rounded-[2px] bg-paper/5 transition-shadow duration-500 group-hover:neon-backlit"
         style={{ aspectRatio: `${media.width} / ${media.height}` }}
       >
         <Image
@@ -201,9 +201,9 @@ export function ContactSheetFrame({
           priority={priority}
           className="object-cover opacity-85 transition-all duration-500 group-hover:scale-[1.03] group-hover:opacity-100"
         />
-        <CropMarks onInk className="opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+        <CropMarks className="opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
       </div>
-      <p className="mono-label mt-1.5 text-paper/40 transition-colors group-hover:text-paper/80">
+      <p className="mono-label mt-1.5 text-paper/40 transition-colors group-hover:text-signal group-hover:neon-text-soft">
         {frameNo}
       </p>
     </button>

@@ -70,13 +70,13 @@ export function SiteHeader() {
         <div
           className={`px-gutter flex h-14 items-center justify-between transition-colors duration-500 md:h-16 ${
             scrolled && !menuOpen
-              ? "bg-paper/85 backdrop-blur-sm border-b border-ink/10"
+              ? "bg-ink/85 backdrop-blur-sm border-b border-paper/10"
               : "bg-transparent"
           }`}
         >
           <Link
             href="/"
-            className="font-display text-[22px] md:text-2xl leading-none text-ink hover:text-signal transition-colors"
+            className="font-display text-[22px] md:text-2xl leading-none text-paper hover:text-signal transition-colors"
             aria-label="MUFASA® — home"
           >
             MUFASA<span className="text-signal align-super text-[0.55em] leading-none">®</span>
@@ -89,7 +89,7 @@ export function SiteHeader() {
                 href={item.href}
                 aria-current={isActive(item) ? "page" : undefined}
                 className={`mono-label link-underline py-2 transition-colors ${
-                  isActive(item) ? "text-ink" : "text-ink/60 hover:text-ink"
+                  isActive(item) ? "text-paper" : "text-paper/60 hover:text-paper"
                 }`}
               >
                 {item.label}
@@ -97,7 +97,7 @@ export function SiteHeader() {
             ))}
             <Link
               href="/#contact"
-              className="mono-label rounded-[20px] border border-ink px-4 py-2.5 text-ink transition-colors hover:bg-ink hover:text-paper"
+              className="mono-label rounded-[20px] border border-paper/70 px-4 py-2.5 text-paper transition-colors hover:bg-signal hover:border-signal hover:text-ink"
             >
               Start a project
             </Link>
@@ -105,7 +105,7 @@ export function SiteHeader() {
 
           <button
             type="button"
-            className="md:hidden mono-label min-h-[44px] min-w-[44px] inline-flex items-center justify-center text-ink"
+            className="md:hidden mono-label min-h-[44px] min-w-[44px] inline-flex items-center justify-center text-paper"
             aria-expanded={menuOpen}
             aria-controls="mobile-menu"
             onClick={() => setMenuOpen(true)}
@@ -213,7 +213,7 @@ function MenuOverlay({ onClose }: { onClose: () => void }) {
       <div className="px-gutter mt-auto pb-10">
         <p className="mono-label text-paper/50">{siteConfig.email}</p>
         {siteConfig.availableForCommissions && (
-          <p className="mono-label mt-2 text-signal">✱ Available for commissions</p>
+          <p className="mono-label mt-2 text-signal neon-text-soft">✱ Available for commissions</p>
         )}
       </div>
     </motion.div>

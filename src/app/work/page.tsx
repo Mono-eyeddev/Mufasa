@@ -20,12 +20,12 @@ export default async function WorkPage({
 
   return (
     <>
-      <section aria-labelledby="archive-heading" className="px-gutter pt-32 pb-24 md:pt-40 md:pb-32 bg-paper text-ink">
-        <p className="mono-label text-ink/50">( The archive )</p>
+      <section aria-labelledby="archive-heading" className="band-ink px-gutter pt-32 pb-24 text-paper md:pt-40 md:pb-32">
+        <p className="mono-label text-paper/50">( The archive )</p>
         <h1 id="archive-heading" className="font-display mt-6 text-[16vw] leading-[0.86] md:text-[10vw]">
-          Work<span className="text-signal">.</span>
+          Work<span className="text-signal neon-text">.</span>
         </h1>
-        <p className="mt-6 max-w-[52ch] text-[17px] leading-relaxed text-ink/80">
+        <p className="mt-6 max-w-[52ch] text-[17px] leading-relaxed text-paper/75">
           Everything on the roll — photography, design boards, film, identity systems and
           campaigns. Filter by discipline or read it as a list.
         </p>

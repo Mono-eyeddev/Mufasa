@@ -49,13 +49,13 @@ export function WorkFilterPills({
             onClick={() => onChange(f.key)}
             className={`mono-label flex min-h-[44px] shrink-0 items-center gap-2 rounded-[20px] border px-4 transition-colors [scroll-snap-align:start] ${
               isActive
-                ? "border-ink bg-ink text-paper"
-                : "border-ink/20 bg-transparent text-ink/70 hover:border-ink/50 hover:text-ink"
+                ? "neon-box border-signal bg-signal text-ink"
+                : "border-paper/25 bg-transparent text-paper/70 hover:border-paper/60 hover:text-paper"
             }`}
           >
-            {isActive && <span aria-hidden="true" className="text-[8px] text-signal">●</span>}
+            {isActive && <span aria-hidden="true" className="text-[8px] text-ink">●</span>}
             {f.label}
-            <span className={isActive ? "text-paper/50" : "text-ink/40"}>({count})</span>
+            <span className={isActive ? "text-ink/60" : "text-paper/40"}>({count})</span>
           </button>
         );
       })}
@@ -102,11 +102,11 @@ export function WorkCard({ project, index }: { project: Project; index: number }
         />
       </div>
       <div className="mt-3 flex items-baseline justify-between gap-3">
-        <p className="mono-label text-ink/50">
+        <p className="mono-label text-paper/50">
           {DISCIPLINE_INDEX[discipline]} — {DISCIPLINE_LABEL[discipline]}
           {project.year ? ` — ${project.year}` : ""}
         </p>
-        <span aria-hidden="true" className="mono-label text-ink/30">{String(index + 1).padStart(2, "0")}</span>
+        <span aria-hidden="true" className="mono-label text-paper/30">{String(index + 1).padStart(2, "0")}</span>
       </div>
       <h3 className="font-display mt-1 text-3xl leading-[0.9] md:text-4xl">
         <span className="link-underline-accent decoration-2">{project.title}</span>
@@ -170,17 +170,17 @@ export function SelectedWork({
       ref={sectionRef}
       id="work"
       aria-labelledby="work-heading"
-      className="px-gutter section-y bg-paper text-ink"
+      className="band-ink px-gutter section-y text-paper"
     >
       <div className="flex flex-wrap items-end justify-between gap-6">
         <Reveal>
-          <p className="mono-label text-ink/50">( Selected work )</p>
+          <p className="mono-label text-paper/50">( Selected work )</p>
           <h2 id="work-heading" className="font-display mt-6 text-6xl md:text-7xl">
-            The work<span className="text-signal">.</span>
+            The work<span className="text-signal neon-text">.</span>
           </h2>
         </Reveal>
         <Reveal delay={0.08}>
-          <Link href="/work" className="mono-label link-underline-accent text-ink">
+          <Link href="/work" className="mono-label link-underline-accent link-underline-neon text-paper">
             Full archive →
           </Link>
         </Reveal>
@@ -212,10 +212,10 @@ export function SelectedWork({
       {finePointer && cursor && !reduce && (
         <div
           aria-hidden="true"
-          className="pointer-events-none fixed z-40 rounded-[20px] bg-ink px-3.5 py-2"
+          className="neon-box pointer-events-none fixed z-40 rounded-[20px] bg-signal px-3.5 py-2"
           style={{ left: cursor.x + 14, top: cursor.y + 14 }}
         >
-          <span className="mono-label text-paper">View</span>
+          <span className="mono-label text-ink">View</span>
         </div>
       )}
     </section>

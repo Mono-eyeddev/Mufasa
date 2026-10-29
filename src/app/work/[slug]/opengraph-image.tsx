@@ -62,7 +62,7 @@ export default async function ProjectOgImage({ params }: { params: Promise<{ slu
             }}
           >
             {project?.title ?? "Work"}
-            <span style={{ color: "#FF3B1F" }}>.</span>
+            <span style={{ color: "#CCFF00" }}>.</span>
           </div>
           <div style={{ display: "flex", fontSize: 20, letterSpacing: "0.08em", opacity: 0.5 }}>
             VICTOR OGINGA — PHOTOGRAPHER · DESIGNER · FILMMAKER
