@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getHomeGrid, getByDiscipline } from "@/lib/content";
+import { Hero } from "@/components/site/hero";
 import { pool } from "@/content/media-pool";
-import { Hero, type HeroSlide } from "@/components/site/hero";
 import { Manifesto } from "@/components/site/manifesto";
 import { SelectedWork } from "@/components/site/selected-work";
 import { FilmReel, ContactSheet } from "@/components/site/film-reel";
@@ -16,11 +16,6 @@ export const metadata: Metadata = {
     "Portfolio of Victor Oginga (MUFASA®) — photographer, graphic designer, filmmaker, brand-identity designer and campaign creative director.",
 };
 
-const heroSlides: HeroSlide[] = [
-  { ...pool.photo1, index: "01", label: "Photography" },
-  { ...pool.design1, index: "02", label: "Graphic Design" },
-  { ...pool.film1, index: "03", label: "Film" },
-];
 
 const serviceRows: ServiceRow[] = [
   {
@@ -115,7 +110,7 @@ export default async function HomePage({
 
   return (
     <>
-      <Hero slides={heroSlides} />
+      <Hero />
       <Manifesto
         lenses={[
           {

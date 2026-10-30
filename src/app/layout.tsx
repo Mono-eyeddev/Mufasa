@@ -4,6 +4,7 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { SiteHeader } from "@/components/site/header";
 import { siteConfig } from "@/content/site";
+import RocketBackToTop from "@/components/site/RocketBackToTop";
 
 const display = Big_Shoulders({
   subsets: ["latin"],
@@ -112,6 +113,7 @@ export default function RootLayout({
         </a>
         <SiteHeader />
         <main id="main">{children}</main>
+        <RocketBackToTop />
         <Toaster />
         <script
           type="application/ld+json"
