@@ -47,7 +47,7 @@ export function Hero() {
       repeat: Infinity,
       ease: "easeInOut",
     }}
-    className="absolute left-[35%] top-[20%] h-[420px] w-[420px] rounded-full bg-[#CCFF00] blur-[150px]"
+    className="absolute left-[35%] top-[20%] h-[420px] w-[420px] rounded-full bg-[#FD802E] blur-[150px]"
   />
 
   {/* Rotating orbital ring */}
@@ -58,9 +58,9 @@ export function Hero() {
       repeat: Infinity,
       ease: "linear",
     }}
-    className="absolute left-[25%] top-[12%] h-[520px] w-[520px] rounded-full border border-[#CCFF00]/20"
+    className="absolute left-[25%] top-[12%] h-[520px] w-[520px] rounded-full border border-[]/20"
   >
-    <div className="absolute left-1/2 top-0 h-3 w-3 -translate-x-1/2 rounded-full bg-[#CCFF00] shadow-[0_0_25px_#CCFF00]" />
+    <div className="absolute left-1/2 top-0 h-3 w-3 -translate-x-1/2 rounded-full bg-[#FD802E] shadow-[0_0_25px_#FD802E]" />
   </motion.div>
 
   {/* Secondary orbital ring */}
@@ -82,7 +82,7 @@ export function Hero() {
       repeat: Infinity,
       ease: "easeInOut",
     }}
-    className="absolute left-[55%] top-[25%] h-5 w-5 rounded-full border border-[#CCFF00]/60"
+    className="absolute left-[55%] top-[25%] h-5 w-5 rounded-full border border-[#FD802E]/60"
   />
 </div>
       {/* Subtle background atmosphere */}
@@ -112,7 +112,7 @@ export function Hero() {
           <div className="relative z-30 flex items-start justify-between gap-6">
             <div>
               <p className="mono-label flex items-center gap-3 text-signal">
-                <span className="h-2 w-2 rounded-full bg-signal shadow-[0_0_12px_#CCFF00]" />
+                <span className="h-2 w-2 rounded-full bg-signal shadow-[0_0_12px_#FD802E]" />
                 MULTIDISCIPLINARY CREATIVE
               </p>
 
@@ -136,7 +136,7 @@ export function Hero() {
             {/* Existing project image — temporary portrait */}
             {/* MUFASA — Acid Darkroom Portrait */}
             {/* Floating MUFASA Portrait */}
-<motion.div
+          <motion.div
   animate={
     reduce
       ? undefined
@@ -153,17 +153,13 @@ export function Hero() {
   className="relative h-full w-[68%] max-w-[410px] overflow-hidden"
 >
   <Image
-    src="/images/mufasa-acid-portrait.png"
+    src="https://res.cloudinary.com/lbs3zryh/image/upload/v1793447549/mufxsa.png"
     alt="Victor Oginga — MUFASA®"
     fill
     priority
     sizes="(min-width: 1024px) 410px, 68vw"
-    className="object-cover object-center"
+    className="object-contain object-bottom"
   />
-
-  {/* Blend portrait into the darkroom */}
-  <div className="absolute inset-0 bg-gradient-to-t from-ink via-transparent to-ink/10" />
-  <div className="absolute inset-0 bg-gradient-to-r from-ink/30 via-transparent to-ink/30" />
 </motion.div>
 
             {/* Handwritten-style editorial signature */}
@@ -272,7 +268,7 @@ export function Hero() {
                   />
                 </defs>
                 <text
-                  fill="#CCFF00"
+                  fill="#FD802E"
                   fontSize="9"
                   letterSpacing="2.2"
                   fontFamily="monospace"

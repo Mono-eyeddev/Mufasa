@@ -1,599 +1,543 @@
-
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useRef } from "react";
 
-type Flight = {
-  x: number;
-  startY: number;
-  targetY: number;
+/* ------------------------------------------------------------------
+   Settings
+------------------------------------------------------------------ */
+const SHOW_AFTER = 350; // px scrolled before the button appears
+const FLIGHT_DURATION = 1600; // ms
+const EXPLOSION_DURATION = 1150; // ms
+const SMOKE_INTERVAL = 65; // ms between smoke puffs
+const MAX_SMOKE = 45;
+const PARTICLE_COUNT = 70;
+
+const RADIUS = 26;
+const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
+
+const EASE = [0.22, 1, 0.36, 1] as const;
+const EXPLOSION_COLORS = ["#FFC247", "#FD802E", "#E94B25", "#FFFFFF", "#FF9D42"];
+
+/* ------------------------------------------------------------------
+   Cubic-bezier easing (same curve for rocket and page scroll)
+------------------------------------------------------------------ */
+function bezier(p: number, x1: number, y1: number, x2: number, y2: number) {
+  const at = (t: number, a: number, b: number) => {
+    const i = 1 - t;
+    return 3 * i * i * t * a + 3 * i * t * t * b + t * t * t;
+  };
+  let lo = 0;
+  let hi = 1;
+  let t = p;
+  for (let n = 0; n < 12; n++) {
+    t = (lo + hi) / 2;
+    if (at(t, x1, x2) < p) lo = t;
+    else hi = t;
+  }
+  return at(t, y1, y2);
+}
+
+const flightEase = (p: number) => bezier(p, EASE[0], EASE[1], EASE[2], EASE[3]);
+
+/* ------------------------------------------------------------------
+   Types
+------------------------------------------------------------------ */
+type Smoke = { x: number; y: number; size: number; drift: number; born: number; life: number };
+type Spark = {
+  vx: number; vy: number; size: number; life: number; age: number;
+  rotation: number; spin: number; color: string;
 };
 
-type SmokeParticle = {
-  id: number;
-  x: number;
-  y: number;
-  size: number;
-  drift: number;
-  duration: number;
-};
+/* A soft grey puff drawn once, then reused with drawImage.
+   This replaces the expensive CSS blur on every smoke element. */
+function makeSmokeSprite() {
+  const c = document.createElement("canvas");
+  c.width = c.height = 64;
+  const g = c.getContext("2d")!;
+  const grad = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+  grad.addColorStop(0, "rgba(133,135,123,0.9)");
+  grad.addColorStop(0.5, "rgba(133,135,123,0.45)");
+  grad.addColorStop(1, "rgba(133,135,123,0)");
+  g.fillStyle = grad;
+  g.fillRect(0, 0, 64, 64);
+  return c;
+}
 
-type ExplosionPosition = {
-  x: number;
-  y: number;
-};
-
-const FLIGHT_DURATION = 1600;
-const EXPLOSION_DURATION = 1200;
-
-const SPARKS = Array.from({ length: 40 }, (_, i) => ({
-  angle: (i / 40) * Math.PI * 2,
-  distance: 65 + ((i * 43) % 130),
-  size: 2 + (i % 4),
-  delay: (i % 7) * 0.025,
-}));
-
-export default function RocketBackToTop() {
-  const [visible, setVisible] = useState(false);
-  const [flight, setFlight] = useState<Flight | null>(null);
-  const [smoke, setSmoke] = useState<SmokeParticle[]>([]);
-  const [explosion, setExplosion] = useState<ExplosionPosition | null>(null);
-
+export default function BackToTop() {
   const buttonRef = useRef<HTMLButtonElement>(null);
-  const launchingRef = useRef(false);
-  const particleId = useRef(0);
-  const animationFrame = useRef<number | null>(null);
-  const cleanupTimer = useRef<number | null>(null);
+  const ringRef = useRef<SVGCircleElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const flyerRef = useRef<HTMLDivElement>(null);
+  const flameRef = useRef<HTMLDivElement>(null);
 
-  // Show the button only when the page is sufficiently scrolled.
+  const tickingRef = useRef(false);
+  const scrollFrame = useRef<number | null>(null);
+  const flightFrame = useRef<number | null>(null);
+  const launchingRef = useRef(false);
+
+  /* ----- scroll progress ring + visibility (no React state) ----- */
   useEffect(() => {
-    const handleScroll = () => {
+    const button = buttonRef.current;
+    const ring = ringRef.current;
+    if (!button || !ring) return;
+
+    const update = () => {
+      tickingRef.current = false;
+      const y = window.scrollY;
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = max > 0 ? Math.min(y / max, 1) : 0;
+      ring.style.strokeDashoffset = String(CIRCUMFERENCE * (1 - progress));
       if (!launchingRef.current) {
-        setVisible(window.scrollY > 350);
+        button.dataset.visible = y > SHOW_AFTER ? "true" : "false";
       }
     };
 
-    handleScroll();
+    const onScroll = () => {
+      if (tickingRef.current) return;
+      tickingRef.current = true;
+      scrollFrame.current = requestAnimationFrame(update);
+    };
 
-    window.addEventListener("scroll", handleScroll, {
-      passive: true,
-    });
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
-
-      if (animationFrame.current !== null) {
-        cancelAnimationFrame(animationFrame.current);
-      }
-
-      if (cleanupTimer.current !== null) {
-        window.clearTimeout(cleanupTimer.current);
-      }
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (scrollFrame.current !== null) cancelAnimationFrame(scrollFrame.current);
+      if (flightFrame.current !== null) cancelAnimationFrame(flightFrame.current);
     };
   }, []);
 
-  // Smoothly scroll the document to the top.
-  const animateScroll = useCallback(
-    (duration: number) => {
-      const initialScroll = window.scrollY;
-      const startTime = performance.now();
+  /* ----- launch sequence: ONE rAF loop drives everything ----- */
+  const launch = () => {
+    const button = buttonRef.current;
+    const canvas = canvasRef.current;
+    const flyer = flyerRef.current;
+    const flame = flameRef.current;
+    if (!button || !canvas || !flyer || !flame || launchingRef.current) return;
 
-      const step = (now: number) => {
-        const progress = Math.min(
-          (now - startTime) / duration,
-          1
-        );
+    const initialScroll = window.scrollY;
+    if (initialScroll === 0) return;
 
-        const eased = 1 - Math.pow(1 - progress, 3);
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      window.scrollTo(0, 0);
+      return;
+    }
 
-        window.scrollTo(
-          0,
-          Math.round(initialScroll * (1 - eased))
-        );
-
-        if (progress < 1) {
-          animationFrame.current = requestAnimationFrame(step);
-        }
-      };
-
-      animationFrame.current = requestAnimationFrame(step);
-    },
-    []
-  );
-
-  const launchRocket = () => {
-    if (launchingRef.current || !buttonRef.current) return;
-
-    const rect = buttonRef.current.getBoundingClientRect();
-
-    const startX = rect.left + rect.width / 2;
-    const startY = rect.top + rect.height / 2;
-
-    // Keep the explosion within the hero's visible area.
-    const targetY = Math.max(
-      130,
-      Math.min(window.innerHeight * 0.28, 250)
-    );
+    const ctx = canvas.getContext("2d");
+    if (!ctx) {
+      window.scrollTo(0, 0);
+      return;
+    }
 
     launchingRef.current = true;
 
-    setVisible(false);
-    setSmoke([]);
-    setExplosion(null);
+    const rect = button.getBoundingClientRect();
+    const startX = rect.left + rect.width / 2;
+    const startY = rect.top + rect.height / 2;
+    const targetY = Math.max(130, Math.min(window.innerHeight * 0.28, 250));
 
-    setFlight({
-      x: startX,
-      startY,
-      targetY,
-    });
+    // Size the overlay canvas to the viewport
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    canvas.width = Math.round(window.innerWidth * dpr);
+    canvas.height = Math.round(window.innerHeight * dpr);
+    canvas.style.width = `${window.innerWidth}px`;
+    canvas.style.height = `${window.innerHeight}px`;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    canvas.style.display = "block";
 
-    // Scroll and rocket animation share the same duration.
-    animateScroll(FLIGHT_DURATION);
+    flyer.style.display = "block";
+    button.dataset.visible = "false";
 
-    const startTime = performance.now();
-    let lastSmokeTime = 0;
+    // Stop fighting CSS smooth scrolling while we drive the scroll ourselves
+    const root = document.documentElement;
+    const previousBehavior = root.style.scrollBehavior;
+    root.style.scrollBehavior = "auto";
 
-    const animateFlight = (now: number) => {
-      const elapsed = now - startTime;
-      const progress = Math.min(elapsed / FLIGHT_DURATION, 1);
+    // Let the user take over scrolling mid-flight (the show goes on)
+    let scrollCancelled = false;
+    const cancelScroll = () => { scrollCancelled = true; };
+    window.addEventListener("wheel", cancelScroll, { passive: true, once: true });
+    window.addEventListener("touchstart", cancelScroll, { passive: true, once: true });
+    window.addEventListener("keydown", cancelScroll, { once: true });
 
-      const eased = 1 - Math.pow(1 - progress, 3);
+    const sprite = makeSmokeSprite();
+    const smoke: Smoke[] = [];
+    let sparks: Spark[] = [];
 
-      const currentY =
-        startY + (targetY - startY) * eased;
+    const t0 = performance.now();
+    let lastSmoke = 0;
+    let lastFrame = t0;
+    let explodedAt = 0;
 
-      // Emit smoke at the rocket's current position.
-      if (
-        elapsed - lastSmokeTime > 65 &&
-        progress < 0.96
-      ) {
-        lastSmokeTime = elapsed;
-
-        const particle: SmokeParticle = {
-          id: particleId.current++,
-          x: startX + (Math.random() - 0.5) * 26,
-          y: currentY + 22,
-          size: 12 + Math.random() * 22,
-          drift: (Math.random() - 0.5) * 65,
-          duration: 1.2 + Math.random() * 0.8,
+    const spawnSparks = () => {
+      sparks = Array.from({ length: PARTICLE_COUNT }, (_, i) => {
+        const angle = (Math.PI * 2 * i) / PARTICLE_COUNT + (Math.random() - 0.5) * 0.16;
+        const speed = 100 + Math.random() * 340;
+        return {
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          size: 1.2 + Math.random() * 3.2,
+          life: 0.55 + Math.random() * 0.5,
+          age: 0,
+          rotation: Math.random() * Math.PI * 2,
+          spin: (Math.random() - 0.5) * 9,
+          color: EXPLOSION_COLORS[Math.floor(Math.random() * EXPLOSION_COLORS.length)],
         };
+      });
+    };
 
-        setSmoke((previous) => [
-          ...previous.slice(-100),
-          particle,
-        ]);
+    const finish = () => {
+      window.removeEventListener("wheel", cancelScroll);
+      window.removeEventListener("touchstart", cancelScroll);
+      window.removeEventListener("keydown", cancelScroll);
+      root.style.scrollBehavior = previousBehavior;
+
+      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+      canvas.style.display = "none";
+      flyer.style.display = "none";
+
+      launchingRef.current = false;
+      flightFrame.current = null;
+      button.dataset.visible = window.scrollY > SHOW_AFTER ? "true" : "false";
+    };
+
+    const frame = (now: number) => {
+      const elapsed = now - t0;
+      const dt = Math.min((now - lastFrame) / 1000, 0.035);
+      lastFrame = now;
+
+      const p = Math.min(elapsed / FLIGHT_DURATION, 1);
+      const e = flightEase(p);
+      const y = startY + (targetY - startY) * e;
+
+      // Page scroll shares the rocket's easing
+      if (!scrollCancelled && p <= 1) {
+        window.scrollTo(0, Math.round(initialScroll * (1 - e)));
       }
 
-      if (progress < 1) {
-        animationFrame.current =
-          requestAnimationFrame(animateFlight);
+      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+      /* --- rocket flight --- */
+      if (p < 1) {
+        const shake = Math.sin(elapsed * 0.05) * 2;
+        flyer.style.transform =
+          `translate3d(${startX}px, ${y}px, 0) translate(-50%, -50%) rotate(${shake}deg)`;
+        flame.style.transform =
+          `translateX(-50%) scaleY(${0.8 + Math.abs(Math.sin(elapsed * 0.09)) * 0.9})`;
+
+        // Exhaust trail: orange glow + white-hot core, fading toward the tail
+        const trailTop = y + 20;
+        const trailAlpha = Math.min(p * 5, 1) * (1 - p * 0.45);
+        if (startY > trailTop) {
+          const glow = ctx.createLinearGradient(0, trailTop, 0, startY);
+          glow.addColorStop(0, `rgba(253,128,46,${0.85 * trailAlpha})`);
+          glow.addColorStop(1, "rgba(253,128,46,0)");
+          ctx.fillStyle = glow;
+          ctx.fillRect(startX - 6, trailTop, 12, startY - trailTop);
+
+          const core = ctx.createLinearGradient(0, trailTop, 0, startY);
+          core.addColorStop(0, `rgba(255,255,255,${0.95 * trailAlpha})`);
+          core.addColorStop(1, "rgba(255,255,255,0)");
+          ctx.fillStyle = core;
+          ctx.fillRect(startX - 1.5, trailTop, 3, startY - trailTop);
+        }
+
+        // Smoke puffs behind the rocket
+        if (elapsed - lastSmoke > SMOKE_INTERVAL && p < 0.96) {
+          lastSmoke = elapsed;
+          smoke.push({
+            x: startX + (Math.random() - 0.5) * 26,
+            y: y + 22,
+            size: 18 + Math.random() * 30,
+            drift: (Math.random() - 0.5) * 65,
+            born: now,
+            life: 1200 + Math.random() * 800,
+          });
+          if (smoke.length > MAX_SMOKE) smoke.shift();
+        }
+      } else if (!explodedAt) {
+        // Rocket reached the hero: hide it and detonate
+        flyer.style.display = "none";
+        explodedAt = now;
+        spawnSparks();
+      }
+
+      /* --- smoke (sprite drawn with drawImage, no blur filter) --- */
+      for (let i = smoke.length - 1; i >= 0; i--) {
+        const s = smoke[i];
+        const sp = (now - s.born) / s.life;
+        if (sp >= 1) {
+          smoke.splice(i, 1);
+          continue;
+        }
+        const size = s.size * (0.45 + sp * 2.35);
+        const slide = 75 * (1 - Math.pow(1 - sp, 2));
+        ctx.globalAlpha = 0.8 * (1 - sp);
+        ctx.drawImage(sprite, s.x + s.drift * sp - size / 2, s.y + slide - size / 2, size, size);
+      }
+      ctx.globalAlpha = 1;
+
+      /* --- explosion --- */
+      let explosionDone = false;
+      if (explodedAt) {
+        const t = now - explodedAt;
+        explosionDone = t >= EXPLOSION_DURATION;
+
+        // Central flash
+        const fp = Math.min(t / 280, 1);
+        const flashOpacity = Math.pow(1 - fp, 2);
+        if (flashOpacity > 0.01) {
+          const r = 8 + fp * 115;
+          const g = ctx.createRadialGradient(startX, targetY, 0, startX, targetY, r);
+          g.addColorStop(0, `rgba(255,255,255,${flashOpacity})`);
+          g.addColorStop(0.22, `rgba(255,194,71,${flashOpacity * 0.85})`);
+          g.addColorStop(0.55, `rgba(253,128,46,${flashOpacity * 0.35})`);
+          g.addColorStop(1, "rgba(253,128,46,0)");
+          ctx.fillStyle = g;
+          ctx.beginPath();
+          ctx.arc(startX, targetY, r, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        // Expanding rings
+        const rp = Math.min(t / 850, 1);
+        const ringOpacity = Math.pow(1 - rp, 1.7);
+        if (ringOpacity > 0.01) {
+          const r = 12 + rp * 175;
+          ctx.lineWidth = 2.5;
+          ctx.strokeStyle = "#FD802E";
+          ctx.globalAlpha = ringOpacity;
+          ctx.beginPath();
+          ctx.arc(startX, targetY, r, 0, Math.PI * 2);
+          ctx.stroke();
+
+          ctx.lineWidth = 1;
+          ctx.strokeStyle = "#FFC247";
+          ctx.globalAlpha = ringOpacity * 0.7;
+          ctx.beginPath();
+          ctx.arc(startX, targetY, r * 0.72, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.globalAlpha = 1;
+        }
+
+        // Sparks with drag + gravity
+        for (const s of sparks) {
+          if (s.age >= s.life) continue;
+          s.age += dt;
+          const a = s.age;
+          const drag = Math.exp(-1.05 * a);
+          const px = startX + s.vx * ((1 - drag) / 1.05);
+          const py = targetY + s.vy * ((1 - drag) / 1.05) + 0.5 * 115 * a * a;
+          const lp = a / s.life;
+          const opacity = Math.pow(Math.max(0, 1 - lp), 1.4);
+          const tail = Math.min(Math.hypot(s.vx, s.vy) * 0.025, 13);
+          const dir = Math.atan2(s.vy + 115 * a, s.vx);
+
+          ctx.save();
+          ctx.globalAlpha = opacity;
+          ctx.translate(px, py);
+          ctx.rotate(dir + s.rotation);
+          ctx.strokeStyle = s.color;
+          ctx.lineWidth = s.size * 0.7;
+          ctx.lineCap = "round";
+          ctx.beginPath();
+          ctx.moveTo(-tail, 0);
+          ctx.lineTo(0, 0);
+          ctx.stroke();
+          ctx.fillStyle = s.color;
+          ctx.beginPath();
+          ctx.arc(0, 0, s.size * (1 - lp * 0.35), 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+
+          s.rotation += s.spin * dt;
+        }
+      }
+
+      if (explosionDone && smoke.length === 0) {
+        finish();
       } else {
-        animationFrame.current = null;
-
-        // Trigger the explosion at the hero.
-        setFlight(null);
-        setExplosion({
-          x: startX,
-          y: targetY,
-        });
-
-        cleanupTimer.current = window.setTimeout(() => {
-          setExplosion(null);
-          setSmoke([]);
-          launchingRef.current = false;
-          setVisible(window.scrollY > 350);
-        }, EXPLOSION_DURATION);
+        flightFrame.current = requestAnimationFrame(frame);
       }
     };
 
-    animationFrame.current =
-      requestAnimationFrame(animateFlight);
+    flightFrame.current = requestAnimationFrame(frame);
   };
 
   return (
     <>
-      {/* FLOATING LAUNCH BUTTON */}
-      <AnimatePresence>
-        {visible && !flight && (
-          <motion.button
-            ref={buttonRef}
-            type="button"
-            aria-label="Launch rocket and return to top"
-            onClick={launchRocket}
-            initial={{
-              opacity: 0,
-              scale: 0.6,
-              y: 20,
-            }}
-            animate={{
-              opacity: 1,
-              scale: 1,
-              y: 0,
-            }}
-            exit={{
-              opacity: 0,
-              scale: 0.5,
-            }}
-            transition={{
-              duration: 0.3,
-              ease: "easeOut",
-            }}
-            className="fixed bottom-7 right-7 z-[100] flex h-14 w-14 items-center justify-center rounded-full border border-[#CCFF00]/50 bg-[#10110B]/95 text-[#CCFF00] shadow-[0_0_24px_rgba(204,255,0,0.2)] backdrop-blur-xl transition-shadow hover:shadow-[0_0_35px_rgba(204,255,0,0.55)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#CCFF00]"
-          >
-            <motion.svg
-              viewBox="0 0 48 48"
-              width="32"
-              height="32"
-              fill="none"
-              animate={{
-                y: [0, -3, 0],
-                rotate: [0, 2, 0, -2, 0],
-              }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-              }}
-            >
-              <path
-                d="M24 3C15 11 12 21 13 31L24 39L35 31C36 21 33 11 24 3Z"
-                fill="#CCFF00"
-                fillOpacity=".12"
-                stroke="#CCFF00"
-                strokeWidth="1.8"
-              />
+      {/* Overlay for flight, smoke and explosion (hidden until launch) */}
+      <canvas ref={canvasRef} aria-hidden="true" className="btt-canvas" />
 
-              <circle
-                cx="24"
-                cy="21"
-                r="4.2"
-                fill="#10110B"
-                stroke="#CCFF00"
-                strokeWidth="2"
-              />
+      {/* The rocket in flight */}
+      <div ref={flyerRef} aria-hidden="true" className="btt-flyer">
+        <svg width="48" height="64" viewBox="0 0 48 64" fill="none">
+          <path
+            d="M24 2C14 14 11 27 13 43L24 53L35 43C37 27 34 14 24 2Z"
+            fill="#233D4C" stroke="#FD802E" strokeWidth="2"
+          />
+          <path
+            d="M24 5C17 16 16 26 17 38L24 45L31 38C32 26 31 16 24 5Z"
+            fill="#FFC247" fillOpacity=".16"
+          />
+          <circle cx="24" cy="27" r="6" fill="#080808" stroke="#FFC247" strokeWidth="2" />
+          <path
+            d="M13 35L4 48L14 45L18 40M35 35L44 48L34 45L30 40"
+            stroke="#FD802E" strokeWidth="2"
+          />
+          <path d="M18 47L24 63L30 47L24 53L18 47Z" fill="#FFC247" />
+        </svg>
+        <div ref={flameRef} className="btt-engine" />
+      </div>
 
-              <path
-                d="M13 25L6 34L14 32L17 28M35 25L42 34L34 32L31 28"
-                stroke="#CCFF00"
-                strokeWidth="1.8"
-              />
+      {/* The button */}
+      <button
+        ref={buttonRef}
+        type="button"
+        aria-label="Launch rocket and return to top"
+        data-visible="false"
+        onClick={launch}
+        className="btt"
+      >
+        <svg className="btt-ring" viewBox="0 0 56 56" aria-hidden="true">
+          <circle className="btt-track" cx="28" cy="28" r={RADIUS} />
+          <circle
+            ref={ringRef}
+            className="btt-progress"
+            cx="28" cy="28" r={RADIUS}
+            strokeDasharray={CIRCUMFERENCE}
+            strokeDashoffset={CIRCUMFERENCE}
+          />
+        </svg>
 
-              <path
-                d="M19 34L24 46L29 34L24 39L19 34Z"
-                fill="#CCFF00"
-              />
-            </motion.svg>
-          </motion.button>
-        )}
-      </AnimatePresence>
-
-      {/* ROCKET FLIGHT AND EXHAUST */}
-      <AnimatePresence>
-        {flight && (
-          <motion.div
-            className="pointer-events-none fixed inset-0 z-[9998] overflow-hidden"
-            initial={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            {/* LONG LIME EXHAUST TRAIL */}
-            <motion.div
-              className="absolute w-4 rounded-full bg-[#CCFF00] blur-md"
-              style={{
-                left: flight.x - 8,
-                top: flight.targetY,
-                height: flight.startY - flight.targetY,
-                transformOrigin: "bottom",
-              }}
-              initial={{
-                scaleY: 0,
-                opacity: 0,
-              }}
-              animate={{
-                scaleY: 1,
-                opacity: [0, 0.9, 0.45],
-              }}
-              transition={{
-                duration: FLIGHT_DURATION / 1000,
-                ease: "linear",
-              }}
+        <span className="btt-icon" aria-hidden="true">
+          <svg viewBox="0 0 48 48" width="30" height="30" fill="none">
+            <path
+              d="M24 3C15 11 12 21 13 31L24 39L35 31C36 21 33 11 24 3Z"
+              fill="#FD802E" fillOpacity=".12" stroke="#FD802E" strokeWidth="1.8"
             />
-
-            {/* WHITE-HOT EXHAUST CORE */}
-            <motion.div
-              className="absolute w-1 rounded-full bg-white blur-sm"
-              style={{
-                left: flight.x - 2,
-                top: flight.targetY,
-                height: flight.startY - flight.targetY,
-                transformOrigin: "bottom",
-              }}
-              initial={{
-                scaleY: 0,
-                opacity: 0,
-              }}
-              animate={{
-                scaleY: 1,
-                opacity: [0, 1, 0.6],
-              }}
-              transition={{
-                duration: FLIGHT_DURATION / 1000,
-                ease: "linear",
-              }}
+            <circle cx="24" cy="21" r="4.2" fill="#080808" stroke="#FFC247" strokeWidth="2" />
+            <path
+              d="M13 25L6 34L14 32L17 28M35 25L42 34L34 32L31 28"
+              stroke="#FD802E" strokeWidth="1.8"
             />
+            <path d="M19 34L24 46L29 34L24 39L19 34Z" fill="#FFC247" />
+          </svg>
+        </span>
+      </button>
 
-            {/* LINGERING SMOKE CLOUDS */}
-            {smoke.map((particle) => (
-              <motion.span
-                key={particle.id}
-                className="absolute rounded-full bg-[#85877B]/75 blur-md"
-                style={{
-                  left: particle.x,
-                  top: particle.y,
-                  width: particle.size,
-                  height: particle.size,
-                }}
-                initial={{
-                  opacity: 0.7,
-                  scale: 0.45,
-                }}
-                animate={{
-                  opacity: 0,
-                  scale: 2.8,
-                  x: particle.drift,
-                  y: 75,
-                }}
-                transition={{
-                  duration: particle.duration,
-                  ease: "easeOut",
-                }}
-              />
-            ))}
+      <style>{`
+        .btt-canvas {
+          position: fixed;
+          inset: 0;
+          z-index: 9999;
+          display: none;
+          pointer-events: none;
+        }
+        .btt-flyer {
+          position: fixed;
+          left: 0;
+          top: 0;
+          z-index: 9998;
+          display: none;
+          pointer-events: none;
+          will-change: transform;
+        }
+        .btt-flyer svg { display: block; }
+        .btt-engine {
+          position: absolute;
+          left: 50%;
+          top: 85%;
+          width: 18px;
+          height: 54px;
+          border-radius: 9999px;
+          transform-origin: top center;
+          transform: translateX(-50%);
+          background: linear-gradient(to bottom, #fff, #FFC247 45%, rgba(253,128,46,0));
+        }
 
-            {/* ROCKET BODY */}
-            <motion.div
-              className="absolute"
-              style={{
-                left: flight.x,
-                top: flight.startY,
-                x: "-50%",
-                y: "-50%",
-              }}
-              animate={{
-                top: flight.targetY,
-                rotate: [0, -2, 2, -1, 0],
-              }}
-              transition={{
-                top: {
-                  duration: FLIGHT_DURATION / 1000,
-                  ease: [0.22, 1, 0.36, 1],
-                },
-                rotate: {
-                  duration: 0.3,
-                  repeat: 5,
-                },
-              }}
-            >
-              <svg
-                width="48"
-                height="64"
-                viewBox="0 0 48 64"
-                fill="none"
-              >
-                <path
-                  d="M24 2C14 14 11 27 13 43L24 53L35 43C37 27 34 14 24 2Z"
-                  fill="#171A0C"
-                  stroke="#CCFF00"
-                  strokeWidth="2"
-                />
+        .btt {
+          position: fixed;
+          right: 28px;
+          bottom: 28px;
+          z-index: 100;
+          width: 56px;
+          height: 56px;
+          padding: 0;
+          display: grid;
+          place-items: center;
+          border: 0;
+          border-radius: 50%;
+          background: rgba(8, 8, 8, 0.95);
+          cursor: pointer;
+          opacity: 0;
+          transform: translateY(24px) scale(0.65);
+          pointer-events: none;
+          box-shadow: 0 0 24px rgba(253, 128, 46, 0.2);
+          transition: opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+            transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+            box-shadow 0.3s ease;
+        }
+        .btt[data-visible="true"] {
+          opacity: 1;
+          transform: none;
+          pointer-events: auto;
+        }
+        .btt[data-visible="true"]:hover {
+          transform: scale(1.08);
+          box-shadow: 0 0 35px rgba(253, 128, 46, 0.4);
+        }
+        .btt[data-visible="true"]:active { transform: scale(0.92); }
+        .btt:focus-visible {
+          outline: 2px solid #FFC247;
+          outline-offset: 3px;
+        }
 
-                <path
-                  d="M24 5C17 16 16 26 17 38L24 45L31 38C32 26 31 16 24 5Z"
-                  fill="#CCFF00"
-                  fillOpacity=".12"
-                />
+        .btt-ring {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          transform: rotate(-90deg);
+        }
+        .btt-track {
+          fill: none;
+          stroke: rgba(253, 128, 46, 0.2);
+          stroke-width: 2;
+        }
+        .btt-progress {
+          fill: none;
+          stroke: #FD802E;
+          stroke-width: 2.5;
+          stroke-linecap: round;
+        }
 
-                <circle
-                  cx="24"
-                  cy="27"
-                  r="6"
-                  fill="#10110B"
-                  stroke="#CCFF00"
-                  strokeWidth="2"
-                />
+        /* Idle bob: CSS only, runs on the compositor */
+        .btt-icon {
+          display: block;
+          line-height: 0;
+          animation: btt-bob 2.5s ease-in-out infinite;
+        }
+        .btt:hover .btt-icon { animation-duration: 0.9s; }
 
-                <path
-                  d="M13 35L4 48L14 45L18 40M35 35L44 48L34 45L30 40"
-                  stroke="#CCFF00"
-                  strokeWidth="2"
-                />
+        @keyframes btt-bob {
+          0%, 100% { transform: translateY(0) rotate(0deg); }
+          25%      { transform: translateY(-1.5px) rotate(2deg); }
+          50%      { transform: translateY(-3px) rotate(0deg); }
+          75%      { transform: translateY(-1.5px) rotate(-2deg); }
+        }
 
-                <path
-                  d="M18 47L24 63L30 47L24 53L18 47Z"
-                  fill="#CCFF00"
-                />
-              </svg>
-
-              {/* ANIMATED ENGINE FLAME */}
-              <motion.div
-                className="absolute left-1/2 top-[85%] h-16 w-5 -translate-x-1/2 rounded-full bg-gradient-to-b from-white via-[#CCFF00] to-transparent blur-sm"
-                animate={{
-                  scaleY: [0.8, 1.6, 0.9],
-                  scaleX: [0.9, 1.2, 0.8],
-                  opacity: [1, 0.75, 1],
-                }}
-                transition={{
-                  duration: 0.12,
-                  repeat: Infinity,
-                }}
-              />
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* FULL-SCREEN HERO EXPLOSION */}
-      <AnimatePresence>
-        {explosion && (
-          <motion.div
-            className="pointer-events-none fixed inset-0 z-[9999] overflow-visible"
-            initial={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <Explosion
-              x={explosion.x}
-              y={explosion.y}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
+        @media (prefers-reduced-motion: reduce) {
+          .btt { transition: none; }
+          .btt-icon { animation: none; }
+        }
+        @media (max-width: 640px) {
+          .btt { right: 16px; bottom: 16px; }
+        }
+      `}</style>
     </>
-  );
-}
-
-/* =========================================
-   CINEMATIC EXPLOSION
-========================================= */
-
-function Explosion({
-  x,
-  y,
-}: {
-  x: number;
-  y: number;
-}) {
-  return (
-    <div
-      className="absolute"
-      style={{
-        left: x,
-        top: y,
-        transform: "translate(-50%, -50%)",
-      }}
-    >
-      {/* CENTRAL WHITE-HOT FLASH */}
-      <motion.div
-        className="absolute -left-10 -top-10 h-20 w-20 rounded-full bg-white blur-xl"
-        initial={{
-          opacity: 1,
-          scale: 0.2,
-        }}
-        animate={{
-          opacity: 0,
-          scale: 4,
-        }}
-        transition={{
-          duration: 0.5,
-          ease: "easeOut",
-        }}
-      />
-
-      {/* LIME ENERGY CORE */}
-      <motion.div
-        className="absolute -left-12 -top-12 h-24 w-24 rounded-full bg-[#CCFF00] blur-2xl"
-        initial={{
-          opacity: 1,
-          scale: 0.3,
-        }}
-        animate={{
-          opacity: 0,
-          scale: 4.5,
-        }}
-        transition={{
-          duration: 0.7,
-          ease: "easeOut",
-        }}
-      />
-
-      {/* PRIMARY SHOCKWAVE */}
-      <motion.div
-        className="absolute -left-5 -top-5 h-10 w-10 rounded-full border-2 border-[#CCFF00] shadow-[0_0_30px_#CCFF00]"
-        initial={{
-          scale: 0.2,
-          opacity: 1,
-        }}
-        animate={{
-          scale: 9,
-          opacity: 0,
-        }}
-        transition={{
-          duration: 0.9,
-          ease: "easeOut",
-        }}
-      />
-
-      {/* SECONDARY SHOCKWAVE */}
-      <motion.div
-        className="absolute -left-5 -top-5 h-10 w-10 rounded-full border border-white"
-        initial={{
-          scale: 0.2,
-          opacity: 0.9,
-        }}
-        animate={{
-          scale: 6,
-          opacity: 0,
-        }}
-        transition={{
-          duration: 0.8,
-          delay: 0.12,
-          ease: "easeOut",
-        }}
-      />
-
-      {/* OUTWARD-FLYING SPARKS */}
-      {SPARKS.map((spark, i) => (
-        <motion.span
-          key={i}
-          className="absolute rounded-full bg-[#CCFF00] shadow-[0_0_14px_#CCFF00]"
-          style={{
-            width: spark.size,
-            height: spark.size,
-          }}
-          initial={{
-            x: 0,
-            y: 0,
-            opacity: 1,
-            scale: 1,
-          }}
-          animate={{
-            x: Math.cos(spark.angle) * spark.distance,
-            y: Math.sin(spark.angle) * spark.distance,
-            opacity: 0,
-            scale: 0.1,
-          }}
-          transition={{
-            duration: 0.9,
-            delay: spark.delay,
-            ease: "easeOut",
-          }}
-        />
-      ))}
-
-      {/* SECONDARY HOT DEBRIS */}
-      {SPARKS.slice(0, 16).map((spark, i) => (
-        <motion.span
-          key={`debris-${i}`}
-          className="absolute rounded-full bg-white shadow-[0_0_10px_white]"
-          style={{
-            width: 2,
-            height: 2,
-          }}
-          initial={{
-            x: 0,
-            y: 0,
-            opacity: 1,
-          }}
-          animate={{
-            x: Math.cos(spark.angle + 0.2) * spark.distance * 0.65,
-            y: Math.sin(spark.angle + 0.2) * spark.distance * 0.65,
-            opacity: 0,
-          }}
-          transition={{
-            duration: 0.7,
-            delay: spark.delay,
-            ease: "easeOut",
-          }}
-        />
-      ))}
-    </div>
   );
 }

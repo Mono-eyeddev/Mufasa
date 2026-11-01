@@ -5,14 +5,19 @@
 
 @theme inline {
   /* ---- MUFASA(R) ACID DARKROOM palette ---- */
-  --color-paper: #ece7dc;
-  --color-ink: #0d0c0a;
-  --color-bone: #f6f2e9;
-  --color-graphite: #2a2824;
-  --color-signal: #ccff00;
-  --color-paper-dim: #e2dccd;
-  --color-ink-2: #14140f;
+--color-paper: #ece7dc;
+--color-ink: #080808;
+--color-bone: #f6f2e9;
+--color-graphite: #233d4c;
 
+--color-signal: #fd802e;
+--color-fire: #fd802e;
+--color-ember: #ffc247;
+--color-flame: #e94b25;
+--color-deep: #233d4c;
+
+--color-paper-dim: #e2dccd;
+--color-ink-2: #111315;
   /* ---- shadcn compatibility, re-pointed to the palette ---- */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -49,24 +54,33 @@
 }
 
 :root {
-  --background: #0d0c0a;
+--background: #080808;
   --foreground: #ece7dc;
-  --card: #14140f;
+
+  --card: #111315;
   --card-foreground: #ece7dc;
-  --popover: #14140f;
+
+  --popover: #111315;
   --popover-foreground: #ece7dc;
-  --primary: #ece7dc;
-  --primary-foreground: #0d0c0a;
-  --secondary: #1d1c16;
+
+  --primary: #fd802e;
+  --primary-foreground: #080808;
+
+  --secondary: #233d4c;
   --secondary-foreground: #ece7dc;
-  --muted: #1d1c16;
+
+  --muted: #18252c;
   --muted-foreground: #a39d8f;
-  --accent: #1d1c16;
-  --accent-foreground: #ece7dc;
-  --destructive: #ccff00;
+
+  --accent: #fd802e;
+  --accent-foreground: #080808;
+
+  --destructive: #e94b25;
+
   --border: rgba(236, 231, 220, 0.14);
   --input: rgba(236, 231, 220, 0.2);
-  --ring: #ccff00;
+  --ring: #fd802e;
+
   --radius: 2px;
 }
 
@@ -122,34 +136,33 @@ body {
 /* ---------- neon (registered as utilities so variants like group-hover: work) ---------- */
 
 /* glowing lime text — used on ink surfaces only */
+/* ---------- FIRE GLOW UTILITIES ---------- */
+
 @utility neon-text {
   text-shadow:
-    0 0 6px rgba(204, 255, 0, 0.5),
-    0 0 22px rgba(204, 255, 0, 0.3),
-    0 0 60px rgba(204, 255, 0, 0.14);
+    0 0 6px rgba(253, 128, 46, 0.55),
+    0 0 22px rgba(253, 128, 46, 0.32),
+    0 0 60px rgba(253, 128, 46, 0.15);
 }
 
-/* quieter glow for small mono labels */
 @utility neon-text-soft {
   text-shadow:
-    0 0 8px rgba(204, 255, 0, 0.45),
-    0 0 20px rgba(204, 255, 0, 0.18);
+    0 0 8px rgba(253, 128, 46, 0.45),
+    0 0 20px rgba(253, 128, 46, 0.2);
 }
 
-/* glowing element edge — pills, chips, active frames */
 @utility neon-box {
   box-shadow:
-    0 0 0 1px rgba(204, 255, 0, 0.45),
-    0 0 16px rgba(204, 255, 0, 0.28),
-    0 0 44px rgba(204, 255, 0, 0.12);
+    0 0 0 1px rgba(253, 128, 46, 0.45),
+    0 0 16px rgba(253, 128, 46, 0.28),
+    0 0 44px rgba(253, 128, 46, 0.12);
 }
 
-/* backlit light-table edge for frames */
 @utility neon-backlit {
   box-shadow:
-    inset 0 0 0 1px rgba(204, 255, 0, 0.55),
-    0 0 22px rgba(204, 255, 0, 0.25),
-    0 0 60px rgba(204, 255, 0, 0.1);
+    inset 0 0 0 1px rgba(253, 128, 46, 0.55),
+    0 0 22px rgba(253, 128, 46, 0.25),
+    0 0 60px rgba(253, 128, 46, 0.1);
 }
 
 /* ---------- typography helpers ---------- */
@@ -272,30 +285,26 @@ body {
 }
 
 /* link underline with accent sweep */
-.link-underline {
-  background-image: linear-gradient(currentColor, currentColor);
-  background-size: 100% 1px;
-  background-position: 0 100%;
-  background-repeat: no-repeat;
-  transition: background-size 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-.link-underline:hover {
-  background-size: 0% 1px;
-}
 .link-underline-accent {
-  background-image: linear-gradient(var(--color-signal), var(--color-signal));
+  background-image: linear-gradient(
+    var(--color-signal),
+    var(--color-signal)
+  );
   background-size: 0% 2px;
   background-position: 0 100%;
   background-repeat: no-repeat;
-  transition: background-size 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), color 0.35s, text-shadow 0.35s;
+  transition:
+    background-size 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+    color 0.35s,
+    text-shadow 0.35s;
 }
+
 .link-underline-accent:hover {
   background-size: 100% 2px;
 }
 
-/* dark-surface variant: lime sweep + a soft neon lift on the label */
 .link-underline-neon:hover {
-  text-shadow: 0 0 14px rgba(204, 255, 0, 0.35);
+  text-shadow: 0 0 14px rgba(253, 128, 46, 0.35);
 }
 
 /* wordmark letter rise (hero load) */
@@ -365,16 +374,37 @@ body {
 }
 
 /* darkroom band — faint lime ambience + hair-thin scanlines, no images */
+/* Main fire-spectrum darkroom */
 .band-ink {
   background:
-    radial-gradient(1200px 500px at 70% -10%, rgba(204, 255, 0, 0.06), transparent 60%),
-    repeating-linear-gradient(0deg, rgba(236, 231, 220, 0.014) 0 1px, transparent 1px 3px),
-    #0d0c0a;
+    radial-gradient(
+      1200px 500px at 70% -10%,
+      rgba(253, 128, 46, 0.09),
+      transparent 60%
+    ),
+    repeating-linear-gradient(
+      0deg,
+      rgba(236, 231, 220, 0.014) 0 1px,
+      transparent 1px 3px
+    ),
+    #080808;
 }
 
-/* lifted darkroom band — slightly raised panel tone */
+/* Raised petrol-blue darkroom */
 .band-ink-2 {
   background:
-    radial-gradient(900px 420px at 20% 0%, rgba(204, 255, 0, 0.045), transparent 55%),
-    #121210;
+    radial-gradient(
+      900px 420px at 20% 0%,
+      rgba(35, 61, 76, 0.45),
+      transparent 55%
+    ),
+    #111315;
+}
+@keyframes mufasa-card-shimmer {
+  0%, 100% {
+    background-position: 100% 0%;
+  }
+  50% {
+    background-position: 0% 100%;
+  }
 }

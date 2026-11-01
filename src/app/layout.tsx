@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { SiteHeader } from "@/components/site/header";
 import { siteConfig } from "@/content/site";
 import RocketBackToTop from "@/components/site/RocketBackToTop";
+import GlowCursorOverlay from "@/components/site/Glowcursoroverlay"; 
 
 const display = Big_Shoulders({
   subsets: ["latin"],
@@ -115,6 +116,7 @@ export default function RootLayout({
         <main id="main">{children}</main>
         <RocketBackToTop />
         <Toaster />
+         <GlowCursorOverlay />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
