@@ -1,0 +1,27 @@
+▲ Next.js 16.4.3 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.0.18:3000
+✓ Ready in 2.6s
+✓ Running next.config.ts took 239ms
+
+○ Compiling / ...
+ GET / 200 in 9.1s (next.js: 4.8s, application-code: 4.3s)
+ GET / 200 in 1934ms (next.js: 107ms, application-code: 1828ms)
+⚠ Blocked cross-origin request to Next.js dev resource /_next/hmr from "192.168.0.18".
+Cross-origin access to Next.js dev resources is blocked by default for safety.
+
+To allow this host in development, add it to "allowedDevOrigins" in next.config.js and restart the dev server:
+
+// next.config.js
+module.exports = {
+  allowedDevOrigins: ['192.168.0.18'],
+}
+
+Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
+ GET / 200 in 29.8s (next.js: 281ms, application-code: 29.5s)
+ GET / 200 in 5.1s (next.js: 41ms, application-code: 5.1s)
+ GET / 200 in 839ms (next.js: 34ms, application-code: 805ms)
+ GET / 200 in 793ms (next.js: 7ms, application-code: 786ms)
+ GET / 200 in 2.9s (next.js: 97ms, application-code: 2.8s)
+ GET / 200 in 637ms (next.js: 16ms, application-code: 621ms)
+ GET / 200 in 684ms (next.js: 10ms, application-code: 674ms)

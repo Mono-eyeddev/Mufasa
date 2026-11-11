@@ -3,8 +3,10 @@
 import Image from "next/image";
 import {
   motion,
+  useMotionValue,
   useReducedMotion,
   useScroll,
+  useSpring,
   useTransform,
 } from "framer-motion";
 import { RotatingBadge } from "./rotating-badge";
@@ -19,6 +21,216 @@ export interface HeroSlide {
   label: string;
 }
 
+function InteractiveContactCard() {
+  const reduce = useReducedMotion();
+
+  const rawX = useMotionValue(0);
+  const rawY = useMotionValue(0);
+
+  const rotateX = useSpring(rawX, {
+    stiffness: 180,
+    damping: 22,
+    mass: 0.7,
+  });
+
+  const rotateY = useSpring(rawY, {
+    stiffness: 180,
+    damping: 22,
+    mass: 0.7,
+  });
+
+  const handleMouseMove = (
+    event: React.MouseEvent<HTMLDivElement>
+  ) => {
+    if (reduce) return;
+
+    const rect = event.currentTarget.getBoundingClientRect();
+
+    const x = (event.clientX - rect.left) / rect.width;
+    const y = (event.clientY - rect.top) / rect.height;
+
+    rawX.set((0.5 - y) * 12);
+    rawY.set((x - 0.5) * 16);
+
+    event.currentTarget.style.setProperty(
+      "--pointer-x",
+      `${x * 100}%`
+    );
+
+    event.currentTarget.style.setProperty(
+      "--pointer-y",
+      `${y * 100}%`
+    );
+  };
+
+  const handleMouseLeave = (
+    event: React.MouseEvent<HTMLDivElement>
+  ) => {
+    rawX.set(0);
+    rawY.set(0);
+
+    event.currentTarget.style.setProperty("--pointer-x", "50%");
+    event.currentTarget.style.setProperty("--pointer-y", "50%");
+  };
+
+  return (
+    <div className="relative w-full max-w-[490px] [perspective:1200px]">
+
+      <motion.div
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+        style={{
+          rotateX: reduce ? 0 : rotateX,
+          rotateY: reduce ? 0 : rotateY,
+          transformStyle: "preserve-3d",
+        }}
+        className="relative isolate w-full rounded-[4px] border border-white/[0.12] bg-[#111111]/80 p-8 text-[#ECE7DC] shadow-[0_30px_100px_rgba(0,0,0,0.5)] backdrop-blur-2xl transition-[border-color,box-shadow] duration-300 hover:border-[#FD802E]/40 hover:shadow-[0_30px_100px_rgba(0,0,0,0.6)] md:p-12 lg:min-h-[490px] lg:p-12"
+      >
+
+        {/* Base glass surface */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 -z-10 rounded-[4px] bg-gradient-to-br from-white/[0.07] via-transparent to-white/[0.015]"
+        />
+
+        {/* Cursor-following orange glare */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 -z-10 rounded-[4px] opacity-70 transition-opacity duration-300 hover:opacity-100"
+          style={{
+            background:
+              "radial-gradient(circle at var(--pointer-x, 50%) var(--pointer-y, 50%), rgba(253,128,46,0.18), transparent 48%)",
+          }}
+        />
+
+        {/* Ambient orange glow */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -right-16 -top-16 -z-10 h-64 w-64 rounded-full bg-[#FD802E]/[0.08] blur-[90px]"
+        />
+
+        {/* Animated technical lines */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 -z-10 overflow-hidden rounded-[4px]"
+        >
+          <div className="absolute left-0 top-[25%] h-px w-full bg-gradient-to-r from-transparent via-[#FD802E]/20 to-transparent" />
+          <div className="absolute left-0 top-[75%] h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+
+          <motion.div
+            animate={reduce ? undefined : { y: ["-100%", "500%"] }}
+            transition={{
+              duration: 7,
+              repeat: Infinity,
+              ease: "linear",
+            }}
+            className="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-transparent via-[#FD802E]/[0.06] to-transparent"
+          />
+        </div>
+
+        {/* Corner brackets */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-3"
+        >
+          <span className="absolute left-0 top-0 h-4 w-4 border-l border-t border-[#FD802E]/50" />
+          <span className="absolute right-0 top-0 h-4 w-4 border-r border-t border-[#FD802E]/50" />
+          <span className="absolute bottom-0 left-0 h-4 w-4 border-b border-l border-[#FD802E]/50" />
+          <span className="absolute bottom-0 right-0 h-4 w-4 border-b border-r border-[#FD802E]/50" />
+        </div>
+
+        {/* Main content */}
+        <div
+          className="relative z-10"
+          style={{ transform: "translateZ(35px)" }}
+        >
+
+          {/* Header */}
+          <div className="flex items-center justify-between">
+            <p className="mono-label text-[#ECE7DC]/50">
+              MUFASA® / PORTFOLIO
+            </p>
+
+            <span className="mono-label text-[#FD802E]/70">
+              001—026
+            </span>
+          </div>
+
+          {/* Heading */}
+          <div className="mt-14">
+            <h2 className="max-w-[390px] font-display text-[clamp(2.2rem,4vw,3.7rem)] uppercase leading-[0.95] tracking-[-0.035em]">
+              Creating
+              <br />
+              Images,
+              <br />
+              Identities
+              <br />
+
+              <span className="serif-accent font-normal italic text-[#FD802E]">
+                & moving pictures.
+              </span>
+            </h2>
+          </div>
+
+          {/* Divider */}
+          <div className="my-10 h-px w-full bg-gradient-to-r from-[#FD802E]/40 via-white/15 to-transparent" />
+
+          {/* Contact */}
+          <div className="pb-12">
+            <p className="mono-label text-[#ECE7DC]/40">
+              HAVE A PROJECT IN MIND?
+            </p>
+
+            <a
+              href="#contact"
+              className="mt-4 inline-flex items-center gap-3 text-xl font-medium tracking-tight text-[#ECE7DC] transition-colors duration-300 hover:text-[#FD802E] md:text-2xl"
+            >
+              Let's work together
+              <span aria-hidden="true">↗</span>
+            </a>
+          </div>
+        </div>
+
+        {/* Circular animated CTA */}
+        {/* Circular animated contact CTA */}
+            <a
+              href="#contact"
+              aria-label="Let's discuss a project"
+              className="group absolute -bottom-9 right-7 flex h-[112px] w-[112px] items-center justify-center rounded-full bg-ink text-paper shadow-xl transition-transform duration-300 hover:scale-105 md:-right-7 md:h-[130px] md:w-[130px]"
+            >
+              <svg
+                viewBox="0 0 120 120"
+                className="absolute inset-0 h-full w-full animate-spin-slow"
+                aria-hidden="true"
+              >
+                <defs>
+                  <path
+                    id="mufasa-contact-circle"
+                    d="M 60,60 m -43,0 a 43,43 0 1,1 86,0 a 43,43 0 1,1 -86,0"
+                  />
+                </defs>
+                <text
+                  fill="#FD802E"
+                  fontSize="9"
+                  letterSpacing="2.2"
+                  fontFamily="monospace"
+                >
+                  <textPath href="#mufasa-contact-circle">
+                    LET'S DISCUSS • LET'S DISCUSS •
+                  </textPath>
+                </text>
+              </svg>
+
+              <span className="text-4xl text-signal transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1">
+                ↗
+              </span>
+            </a>
+      </motion.div>
+    </div>
+  );
+}
+
+
 export function Hero() {
   const reduce = useReducedMotion();
 
@@ -28,6 +240,7 @@ export function Hero() {
   return (
     <section
       aria-label="Introduction"
+      id="home"
       className="band-ink relative isolate min-h-[900px] overflow-hidden px-gutter pb-16 pt-10 text-paper md:min-h-[850px] lg:min-h-[100svh] lg:pb-20 lg:pt-12"
     >
       
@@ -122,7 +335,7 @@ export function Hero() {
             </div>
 
             <div className="text-right lg:hidden">
-              <p className="mono-label text-paper/50">MUFASA®</p>
+              <p className="mono-label text-paper/50">OGINGA®</p>
               <p className="mono-label mt-2 text-signal">001 / CREATIVE</p>
             </div>
           </div>
@@ -131,12 +344,9 @@ export function Hero() {
           <div className="pointer-events-none absolute inset-x-0 top-[12%] z-10 flex h-[430px] items-center justify-center md:h-[500px] lg:inset-x-[8%] lg:top-[3%] lg:h-[590px]">
 
             {/* Lime atmospheric glow */}
-            <div className="absolute left-[25%] top-[25%] h-[220px] w-[220px] rounded-full bg-signal/[0.13] blur-[85px] md:h-[300px] md:w-[300px]" />
-
-            {/* Existing project image — temporary portrait */}
-            {/* MUFASA — Acid Darkroom Portrait */}
-            {/* Floating MUFASA Portrait */}
-          <motion.div
+            <div className="absolute left-[25%] top-[25%] h-[220px] w-[220px] rounded-full bg-signal/[0.13] blur-[85px] md:h-[300px] md:w-[300px]" />      
+{/* Floating MUFASA Portrait */}
+ <motion.div
   animate={
     reduce
       ? undefined
@@ -162,19 +372,9 @@ export function Hero() {
   />
 </motion.div>
 
-            {/* Handwritten-style editorial signature */}
-            <div className="absolute left-[2%] top-[48%] z-20 -rotate-[12deg] md:left-[4%]">
-              <span className="serif-accent text-[clamp(3rem,8vw,7rem)] italic leading-none text-signal">
-                Mufasa
-              </span>
-            </div>
-
-            <div className="absolute bottom-[4%] right-[4%] z-20 rotate-[7deg]">
-              <span className="serif-accent text-[clamp(2.5rem,6vw,5rem)] italic text-paper">
-                Visuals.
-              </span>
-            </div>
-
+            
+            
+          
         
           </div>
 
@@ -182,7 +382,7 @@ export function Hero() {
           <div className="relative z-30 mt-[390px] md:mt-[440px] lg:mt-[470px]">
             <p className="mono-label mb-5 flex items-center gap-3 text-paper/65">
               <span className="h-2 w-2 rounded-full bg-signal" />
-              VICTOR OGINGA — MUFASA®
+              VICTOR OGINGA: OGINGA®
             </p>
 
             <h1 className="max-w-[1050px] font-display text-[clamp(3.1rem,8.2vw,8.8rem)] uppercase leading-[0.82] tracking-[-0.045em] text-paper">
@@ -212,79 +412,11 @@ export function Hero() {
           </div>
         </div>
 
-        {/* RIGHT — Floating contact card */}
-        <div className="relative z-30 flex items-center justify-center lg:justify-end">
 
-          <div className="relative w-full max-w-[490px] rounded-[4px] bg-paper p-8 text-ink shadow-[0_30px_100px_rgba(0,0,0,0.25)] md:p-12 lg:min-h-[490px] lg:p-12">
-
-            <div className="flex items-center justify-between">
-              <p className="mono-label text-ink/55">MUFASA® / PORTFOLIO</p>
-              <span className="mono-label text-ink/45">001—026</span>
-            </div>
-
-            <div className="mt-14">
-              <h2 className="max-w-[390px] font-display text-[clamp(2.2rem,4vw,3.7rem)] uppercase leading-[0.95] tracking-[-0.035em]">
-                Creating
-                <br />
-                Images,
-                <br />
-                Identities
-                <br />
-                <span className="serif-accent font-normal italic text-ink/65">
-                  & moving pictures.
-                </span>
-              </h2>
-            </div>
-
-            <div className="my-10 h-px w-full bg-ink/15" />
-
-            <div className="pb-12">
-              <p className="mono-label text-ink/50">HAVE A PROJECT IN MIND?</p>
-
-              <a
-                href="#contact"
-                className="mt-4 inline-flex items-center gap-3 text-xl font-medium tracking-tight transition-colors hover:text-ink/55 md:text-2xl"
-              >
-                Let's work together
-                <span aria-hidden="true">↗</span>
-              </a>
-            </div>
-
-            {/* Circular animated contact CTA */}
-            <a
-              href="#contact"
-              aria-label="Let's discuss a project"
-              className="group absolute -bottom-9 right-7 flex h-[112px] w-[112px] items-center justify-center rounded-full bg-ink text-paper shadow-xl transition-transform duration-300 hover:scale-105 md:-right-7 md:h-[130px] md:w-[130px]"
-            >
-              <svg
-                viewBox="0 0 120 120"
-                className="absolute inset-0 h-full w-full animate-spin-slow"
-                aria-hidden="true"
-              >
-                <defs>
-                  <path
-                    id="mufasa-contact-circle"
-                    d="M 60,60 m -43,0 a 43,43 0 1,1 86,0 a 43,43 0 1,1 -86,0"
-                  />
-                </defs>
-                <text
-                  fill="#FD802E"
-                  fontSize="9"
-                  letterSpacing="2.2"
-                  fontFamily="monospace"
-                >
-                  <textPath href="#mufasa-contact-circle">
-                    LET'S DISCUSS • LET'S DISCUSS •
-                  </textPath>
-                </text>
-              </svg>
-
-              <span className="text-4xl text-signal transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1">
-                ↗
-              </span>
-            </a>
-          </div>
-        </div>
+       {/* RIGHT — Interactive 3D contact card */}
+<div className="relative z-30 flex items-center justify-center lg:justify-end">
+  <InteractiveContactCard />
+</div>
       </div>
 
       {/* Bottom page marker */}

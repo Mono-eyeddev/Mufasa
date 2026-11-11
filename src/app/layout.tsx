@@ -6,6 +6,8 @@ import { SiteHeader } from "@/components/site/header";
 import { siteConfig } from "@/content/site";
 import RocketBackToTop from "@/components/site/RocketBackToTop";
 import GlowCursorOverlay from "@/components/site/Glowcursoroverlay"; 
+import { Preloader } from "@/components/site/preloader";
+import { StickyContact } from "@/components/site/sticky-contact";
 
 const display = Big_Shoulders({
   subsets: ["latin"],
@@ -43,8 +45,8 @@ const mono = DM_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
   title: {
-    default: "MUFASA® — Victor Oginga, Photography · Design · Film",
-    template: "%s — MUFASA®",
+    default: "MUFASA®: Victor Oginga, Photography · Design · Film",
+    template: "%s MUFASA®",
   },
   description: siteConfig.description,
   keywords: [
@@ -58,7 +60,7 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: siteConfig.name }],
   openGraph: {
-    title: "MUFASA® — Victor Oginga",
+    title: "MUFASA®: Victor Oginga",
     description: siteConfig.description,
     url: siteConfig.url,
     siteName: "MUFASA®",
@@ -67,7 +69,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "MUFASA® — Victor Oginga",
+    title: "MUFASA®: Victor Oginga",
     description: siteConfig.description,
   },
   robots: { index: true, follow: true },
@@ -106,6 +108,7 @@ export default function RootLayout({
       <body
         className={`${display.variable} ${serifAccent.variable} ${body.variable} ${mono.variable} antialiased bg-ink text-paper`}
       >
+         <Preloader />
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:bg-signal focus:text-ink focus:px-4 focus:py-2 mono-label"
@@ -113,7 +116,8 @@ export default function RootLayout({
           Skip to content
         </a>
         <SiteHeader />
-        <main id="main">{children}</main>
+<StickyContact />
+<main id="main">{children}</main>
         <RocketBackToTop />
         <Toaster />
          <GlowCursorOverlay />

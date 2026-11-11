@@ -28,16 +28,5 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   };
 }
 
-export default async function ProjectPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
-  const project = getProjectBySlug(slug);
-  if (!project) notFound();
-  const { next } = getAdjacentProjects(slug);
 
-  return (
-    <>
-      <ProjectView project={project} next={next!} />
-      <FooterWordmark />
-    </>
-  );
-}
+

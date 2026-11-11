@@ -5,7 +5,7 @@
 export const siteConfig = {
   /** Legal / personal name */
   name: "Victor Oginga",
-  /** Professional name — always typeset with the (R). */
+  /** Professional name: always typeset with the (R). */
   brand: "MUFASA®",
   /** Professional name without the mark, for the display wordmark. */
   brandShort: "MUFASA",
@@ -29,7 +29,20 @@ export const siteConfig = {
   /**
    * Verified social links only. None verified yet — keep empty rather than guessing.
    */
-  socials: [] as { label: string; href: string }[],
+  socials: [
+  {
+    label: "WhatsApp",
+    href: "YOUR_WHATSAPP_LINK",
+  },
+  {
+    label: "YouTube",
+    href: "YOUR_YOUTUBE_LINK",
+  },
+  {
+    label: "Instagram",
+    href: "YOUR_INSTAGRAM_LINK",
+  },
+],
   /** Services offered — factual list, no pricing. */
   services: [
     {

@@ -1,25 +1,52 @@
+
 import Image from "next/image";
 import { siteConfig } from "@/content/site";
 import type { Media } from "@/content/types";
 import { Reveal } from "./reveal";
 import { CropMarks } from "./crop-marks";
 import { RotatingBadge } from "./rotating-badge";
+import DotField from "./DotField";
 
-/**
- * About — portrait in a tall arch, factual bio, rotating ® badge.
- * No invented history: only what the config carries.
- */
 export function About({ portrait }: { portrait: Media }) {
   return (
     <section
       id="about"
       aria-labelledby="about-heading"
-      className="band-ink-2 border-t border-paper/10 px-gutter section-y text-paper"
+      className="relative isolate overflow-hidden band-ink-2 border-t border-paper/10 px-gutter section-y text-paper"
     >
-      <div className="grid grid-cols-1 gap-12 md:grid-cols-12 md:gap-6">
+      {/* Interactive background */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 z-0 opacity-75"
+      >
+        <DotField
+          gradientFrom="#FD802E"
+          gradientTo="#ECE7DC"
+          dotRadius={1.1}
+          dotSpacing={17}
+          pattern="grid"
+          gradientAngle={135}
+          cursorRadius={190}
+          bulgeStrength={0.35}
+          glowColor="#FD802E"
+          glowRadius={125}
+          glowIntensity={0.55}
+          baseOpacity={0.18}
+          sparkle={false}
+          waveAmplitude={0}
+          speed={1}
+          interactive={true}
+          holdToZoom={false}
+          intro={true}
+          opacity={0.75}
+          maxDevicePixelRatio={1.5}
+        />
+      </div>
+
+      {/* About content */}
+      <div className="relative z-10 grid grid-cols-1 gap-12 md:grid-cols-12 md:gap-6">
         <Reveal className="md:col-span-5">
           <div className="relative mx-auto w-full max-w-[380px]">
-            {/* tall arch crop */}
             <div className="relative aspect-[4/5] overflow-hidden rounded-t-full rounded-b-[2px] bg-bone">
               <Image
                 src={portrait.src}
@@ -32,6 +59,7 @@ export function About({ portrait }: { portrait: Media }) {
               />
               <CropMarks />
             </div>
+
             <p className="mono-label mt-4 text-center text-paper/50">
               ( Victor Oginga — MUFASA® )
             </p>
@@ -41,35 +69,59 @@ export function About({ portrait }: { portrait: Media }) {
         <div className="md:col-span-6 md:col-start-7">
           <Reveal>
             <p className="mono-label text-paper/50">( About )</p>
-            <h2 id="about-heading" className="font-display mt-6 text-5xl md:text-6xl">
-              The name on the contact sheet<span className="text-signal neon-text">.</span>
+
+            <h2
+              id="about-heading"
+              className="font-display mt-6 text-5xl md:text-6xl"
+            >
+              The name on the contact sheet
+              <span className="text-signal neon-text">.</span>
             </h2>
+
             <div className="mt-8 max-w-[54ch] space-y-5 text-[17px] leading-relaxed text-paper/75">
               <p>
-                Victor Oginga works under the name MUFASA® — photographer, graphic designer and
-                filmmaker. The studio's output moves between stills, identities and moving
-                pictures, often within the same project.
+                Victor Oginga works under the name MUFASA® — photographer,
+                graphic designer and filmmaker. The studio's output moves
+                between stills, identities and moving pictures, often within
+                the same project.
               </p>
+
               <p>
-                Work is made start to finish in-house: shot, designed, directed and cut. Briefs
-                are accepted across photography, design, film, branding and campaign direction.
+                Work is made start to finish in-house: shot, designed,
+                directed and cut. Briefs are accepted across photography,
+                design, film, branding and campaign direction.
               </p>
             </div>
 
             <dl className="mt-10 space-y-3 border-t border-paper/15 pt-6">
               <div className="flex items-baseline gap-4">
-                <dt className="mono-label w-24 shrink-0 text-paper/45">Disciplines</dt>
-                <dd className="text-[15px] text-paper/80">Photography · Graphic Design · Film · Branding · Creative Direction</dd>
+                <dt className="mono-label w-24 shrink-0 text-paper/45">
+                  Disciplines
+                </dt>
+                <dd className="text-[15px] text-paper/80">
+                  Photography · Graphic Design · Film · Branding · Creative
+                  Direction
+                </dd>
               </div>
+
               <div className="flex items-baseline gap-4">
-                <dt className="mono-label w-24 shrink-0 text-paper/45">Based</dt>
-                <dd className="text-[15px] text-paper/80">{siteConfig.location ?? "Location on request"}</dd>
+                <dt className="mono-label w-24 shrink-0 text-paper/45">
+                  Based
+                </dt>
+                <dd className="text-[15px] text-paper/80">
+                  {siteConfig.location ?? "Location on request"}
+                </dd>
               </div>
+
               <div className="flex items-baseline gap-4">
-                <dt className="mono-label w-24 shrink-0 text-paper/45">Status</dt>
+                <dt className="mono-label w-24 shrink-0 text-paper/45">
+                  Status
+                </dt>
                 <dd className="text-[15px] text-paper/80">
                   {siteConfig.availableForCommissions ? (
-                    <span className="text-signal neon-text-soft">✱ Available for commissions</span>
+                    <span className="text-signal neon-text-soft">
+                      ✱ Available for commissions
+                    </span>
                   ) : (
                     "Booking by enquiry"
                   )}

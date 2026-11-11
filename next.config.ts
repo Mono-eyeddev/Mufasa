@@ -4,6 +4,15 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   output: "standalone",
 
+  allowedDevOrigins: [
+    "192.168.0.18",
+    "localhost",
+  ],
+
+  turbopack: {
+    root: process.cwd(),
+  },
+
   images: {
     remotePatterns: [
       {
@@ -14,10 +23,10 @@ const nextConfig: NextConfig = {
     ],
   },
 
-  /* config options here */
   typescript: {
     ignoreBuildErrors: true,
   },
+
   reactStrictMode: false,
 };
 

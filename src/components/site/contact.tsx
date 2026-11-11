@@ -8,6 +8,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { siteConfig } from "@/content/site";
 import { Reveal } from "./reveal";
+import ElectricBorder from "./ElectricBorder";
 
 const schema = z.object({
   name: z.string().min(2, "Add your name."),
@@ -154,161 +155,162 @@ export function Contact({ providerConfigured }: { providerConfigured: boolean })
               </label>
             </div>
 
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-              <div>
-                <label htmlFor="cf-name" className="mono-label mb-2 block text-paper/60">
-                  Name
-                </label>
-                <input
-                  id="cf-name"
-                  type="text"
-                  autoComplete="name"
-                  placeholder="Your name"
-                  aria-invalid={!!errors.name}
-                  aria-describedby={errors.name ? "cf-name-err" : undefined}
-                  className={inputBase}
-                  {...register("name")}
-                />
-                {errors.name && (
-                  <p id="cf-name-err" role="alert" className="mono-label mt-2 text-signal">
-                    {errors.name.message}
-                  </p>
-                )}
-              </div>
-              <div>
-                <label htmlFor="cf-email" className="mono-label mb-2 block text-paper/60">
-                  Email
-                </label>
-                <input
-                  id="cf-email"
-                  type="email"
-                  autoComplete="email"
-                  placeholder="you@studio.com"
-                  aria-invalid={!!errors.email}
-                  aria-describedby={errors.email ? "cf-email-err" : undefined}
-                  className={inputBase}
-                  {...register("email")}
-                />
-                {errors.email && (
-                  <p id="cf-email-err" role="alert" className="mono-label mt-2 text-signal">
-                    {errors.email.message}
-                  </p>
-                )}
-              </div>
-            </div>
+<div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+  <div>
+    <label htmlFor="cf-name" className="mono-label mb-2 block text-paper/60">
+      Name
+    </label>
+      <input
+        id="cf-name"
+        type="text"
+        autoComplete="name"
+        placeholder="Your name"
+        aria-invalid={!!errors.name}
+        aria-describedby={errors.name ? "cf-name-err" : undefined}
+        className={inputBase}
+        {...register("name")}
+      />
+    
 
-            <div>
-              <label htmlFor="cf-type" className="mono-label mb-2 block text-paper/60">
-                Project type
-              </label>
-              <select
-                id="cf-type"
-                aria-invalid={!!errors.projectType}
-                aria-describedby={errors.projectType ? "cf-type-err" : undefined}
-                className={`${inputBase} appearance-none bg-ink ${errors.projectType ? "border-signal" : ""}`}
-                {...register("projectType")}
-              >
-                <option value="" disabled className="bg-ink">
-                  Select a type…
-                </option>
-                {PROJECT_TYPES.map((t) => (
-                  <option key={t} value={t} className="bg-ink">
-                    {t}
-                  </option>
-                ))}
-              </select>
-              {errors.projectType && (
-                <p id="cf-type-err" role="alert" className="mono-label mt-2 text-signal">
-                  {errors.projectType.message}
-                </p>
-              )}
-            </div>
+    {errors.name && (
+      <p id="cf-name-err" role="alert" className="mono-label mt-2 text-signal">
+        {errors.name.message}
+      </p>
+    )}
+  </div>
 
-            <div>
-              <label htmlFor="cf-message" className="mono-label mb-2 block text-paper/60">
-                Message
-              </label>
-              <textarea
-                id="cf-message"
-                rows={5}
-                placeholder="What are we making?"
-                aria-invalid={!!errors.message}
-                aria-describedby={errors.message ? "cf-message-err" : undefined}
-                className={`${inputBase} resize-y`}
-                {...register("message")}
-              />
-              {errors.message && (
-                <p id="cf-message-err" role="alert" className="mono-label mt-2 text-signal">
-                  {errors.message.message}
-                </p>
-              )}
-            </div>
+  <div>
+    <label htmlFor="cf-email" className="mono-label mb-2 block text-paper/60">
+      Email
+    </label>
 
-            <div className="flex flex-wrap items-center gap-5 pt-2">
-              <button
-                type="submit"
-                disabled={serverState.status === "sending"}
-                className="mono-label min-h-[44px] rounded-[20px] bg-paper px-6 text-ink transition-colors hover:bg-signal hover:text-ink disabled:opacity-50"
-              >
-                {serverState.status === "sending" ? "Sending…" : "Send it →"}
-              </button>
+  
+      <input
+        id="cf-email"
+        type="email"
+        autoComplete="email"
+        placeholder="you@studio.com"
+        aria-invalid={!!errors.email}
+        aria-describedby={errors.email ? "cf-email-err" : undefined}
+        className={inputBase}
+        {...register("email")}
+      />
 
-              {serverState.status === "sent" && (
-                <motion.p
-                  role="status"
-                  initial={reduce ? false : { opacity: 0, y: 6 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="mono-label neon-text-soft text-signal"
-                >
-                  ✱ Sent — you&apos;ll hear back soon.
-                </motion.p>
-              )}
+    {errors.email && (
+      <p id="cf-email-err" role="alert" className="mono-label mt-2 text-signal">
+        {errors.email.message}
+      </p>
+    )}
+  </div>
+</div>
 
-              {(serverState.status === "error" || !providerConfigured) && (
-                <p role={serverState.status === "error" ? "alert" : undefined} className="mono-label max-w-[42ch] text-paper/70">
-                  {serverState.status === "error"
-                    ? serverState.message
-                    : "Form delivery isn't wired to an inbox yet — use the email address on the left."}
-                </p>
-              )}
-            </div>
+<div>
+  <label htmlFor="cf-type" className="mono-label mb-2 block text-paper/60">
+    Project type
+  </label>
+
+    <select
+      id="cf-type"
+      aria-invalid={!!errors.projectType}
+      aria-describedby={errors.projectType ? "cf-type-err" : undefined}
+      className={`${inputBase} appearance-none bg-ink ${errors.projectType ? "border-signal" : ""}`}
+      {...register("projectType")}
+    >
+      <option value="" disabled className="bg-ink">
+        Select a type…
+      </option>
+      {PROJECT_TYPES.map((t) => (
+        <option key={t} value={t} className="bg-ink">
+          {t}
+        </option>
+      ))}
+    </select>
+
+  {errors.projectType && (
+    <p id="cf-type-err" role="alert" className="mono-label mt-2 text-signal">
+      {errors.projectType.message}
+    </p>
+  )}
+</div>
+
+<div>
+  <label htmlFor="cf-message" className="mono-label mb-2 block text-paper/60">
+    Message
+  </label>
+
+  <ElectricBorder
+    color="#FD802E"
+    glowColor="#FD802E"
+    speed={0.8}
+    chaos={0.45}
+    spread={0.3}
+    thickness={1.2}
+    strands={2}
+    glow={0.7}
+    intensity={0.9}
+    arcs={0.8}
+    flicker={0.45}
+    borderRadius={2}
+    offset={1}
+    interactive={true}
+    cursorRadius={70}
+    theme="dark"
+    className="w-full"
+  >
+    <textarea
+      id="cf-message"
+      rows={5}
+      placeholder="What are we making?"
+      aria-invalid={!!errors.message}
+      aria-describedby={errors.message ? "cf-message-err" : undefined}
+      className={`${inputBase} resize-y`}
+      {...register("message")}
+    />
+  </ElectricBorder>
+
+  {errors.message && (
+    <p id="cf-message-err" role="alert" className="mono-label mt-2 text-signal">
+      {errors.message.message}
+    </p>
+  )}
+</div>
+
+<div className="flex flex-wrap items-center gap-5 pt-2">
+  <button
+    type="submit"
+    disabled={serverState.status === "sending"}
+    className="mono-label min-h-[44px] rounded-[20px] bg-paper px-6 text-ink transition-colors hover:bg-signal hover:text-ink disabled:opacity-50"
+  >
+    {serverState.status === "sending" ? "Sending…" : "Send it →"}
+  </button>
+
+  {serverState.status === "sent" && (
+    <motion.p
+      role="status"
+      initial={reduce ? false : { opacity: 0, y: 6 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="mono-label neon-text-soft text-signal"
+    >
+      ✱ Sent — you&apos;ll hear back soon.
+    </motion.p>
+  )}
+
+  {(serverState.status === "error" || !providerConfigured) && (
+    <p
+      role={serverState.status === "error" ? "alert" : undefined}
+      className="mono-label max-w-[42ch] text-paper/70"
+    >
+      {serverState.status === "error"
+        ? serverState.message
+        : "Form delivery isn't wired to an inbox yet — use the email address on the left."}
+    </p>
+  )}
+</div>
           </form>
         </Reveal>
       </div>
 
-      <FooterWordmark />
+     
     </section>
-  );
-}
-
-/** Giant MUFASA® wordmark cropped at the bottom edge of the page. */
-export function FooterWordmark({ tone = "ink" }: { tone?: "ink" | "paper" }) {
-  const text = tone === "ink" ? "text-paper" : "text-ink";
-  const rule = tone === "ink" ? "border-paper/10" : "border-ink/10";
-  const sub = tone === "ink" ? "text-paper/40" : "text-ink/45";
-  return (
-    <footer aria-label="Footer" className={`bg-ink`}>
-      {/* wordmark, cropped at the bottom edge */}
-      <div aria-hidden="true" className="overflow-hidden" style={{ height: "17.5vw" }}>
-        <p
-          className={`px-gutter whitespace-nowrap text-center font-display text-[26vw] leading-[0.86] ${text} select-none`}
-        >
-          MUFAS
-          <span className="relative inline-block align-bottom">
-            <span
-              className={`absolute text-[0.3em] text-signal neon-text-soft`}
-              style={{ top: "0.04em", right: "-0.32em", lineHeight: 1 }}
-            >
-              ®
-            </span>
-            A
-          </span>
-        </p>
-      </div>
-      <div className={`px-gutter relative z-10 flex flex-wrap items-center justify-between gap-3 border-t ${rule} py-4 bg-ink`}>
-        <p className={`mono-label ${sub}`}>© {new Date().getFullYear()} Victor Oginga — MUFASA®</p>
-        <p className={`mono-label ${sub}`}>Photography · Design · Film</p>
-      </div>
-    </footer>
   );
 }

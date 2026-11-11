@@ -3,7 +3,7 @@ import Link from "next/link";
 export default function NotFound() {
   return (
     <section className="band-ink px-gutter flex min-h-[80svh] flex-col justify-center py-32 text-paper">
-      <p className="mono-label text-paper/50">( 404 — Frame missing )</p>
+      <p className="mono-label text-paper/50">( 404 Frame missing )</p>
       <h1 className="font-display mt-6 text-[18vw] leading-[0.86] md:text-[10vw]">
         Not developed<span className="text-signal neon-text">.</span>
       </h1>
