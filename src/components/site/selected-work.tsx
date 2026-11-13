@@ -125,7 +125,7 @@ export function WorkFilterPills({
   );
 }
 
-/* ───────────────────────── WORK CARD ───────────────────────── */
+
 
 
 
@@ -239,10 +239,7 @@ export function SelectedWork({
       ref={sectionRef}
       id="work"
       aria-labelledby="work-heading"
-      className="
-        band-ink px-gutter
-        section-y text-paper
-      "
+      className=" band-ink px-gutter pt-20 pb-24 text-paper"
     >
       {/* Section heading */}
       <div className="
