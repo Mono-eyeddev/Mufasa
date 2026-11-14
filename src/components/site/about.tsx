@@ -354,7 +354,7 @@ export function About({ portrait }: { portrait: Media }) {
 
               {/* Minimal corner details */}
               <span className="mono-label absolute bottom-4 left-4 text-paper/40">
-                MUFASA®
+                OGINGA®
               </span>
 
               <span className="mono-label absolute bottom-4 right-4 text-paper/40">

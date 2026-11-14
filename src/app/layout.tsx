@@ -45,8 +45,8 @@ const mono = DM_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
   title: {
-    default: "MUFASA®: Victor Oginga, Photography · Design · Film",
-    template: "%s MUFASA®",
+    default: "OGINGA®: Victor Oginga, Photography · Design · Film",
+    template: "%s OGINGA®",
   },
   description: siteConfig.description,
   keywords: [
@@ -60,10 +60,10 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: siteConfig.name }],
   openGraph: {
-    title: "MUFASA®: Victor Oginga",
+    title: "OGINGA®: Victor Oginga",
     description: siteConfig.description,
     url: siteConfig.url,
-    siteName: "MUFASA®",
+    siteName: "OGINGA®",
     type: "website",
     locale: "en",
   },

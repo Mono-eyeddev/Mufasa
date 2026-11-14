@@ -16,7 +16,7 @@ import { BehindTheScenes } from "@/components/site/behind-the-scenes";
 import { Brands } from "@/components/site/Brand";
 
 export const metadata: Metadata = {
-  title: "MUFASA® — Victor Oginga, Photography · Design · Film",
+  title: "OGINGA® : Photography · Design · Film",
   description:
     "Portfolio of Victor Oginga (MUFASA®) — photographer, graphic designer, filmmaker, brand-identity designer and campaign creative director.",
 };

@@ -6,15 +6,15 @@ export const siteConfig = {
   /** Legal / personal name */
   name: "Victor Oginga",
   /** Professional name: always typeset with the (R). */
-  brand: "MUFASA®",
+  brand: "OGINGA®",
   /** Professional name without the mark, for the display wordmark. */
-  brandShort: "MUFASA",
+  brandShort: "OGINGA",
   /** Working email — replace with the real inbox before launch. */
-  email: "hello@mufasa.studio",
+  email: "Zakaoginga@gmail.com",
   /** Canonical site URL. Set NEXT_PUBLIC_SITE_URL in production. */
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
   description:
-    "Victor Oginga, known professionally as MUFASA® — photographer, graphic designer, filmmaker, brand-identity designer and campaign creative director.",
+    "Victor Oginga, known professionally as MUFASA : photographer, graphic designer, filmmaker, brand-identity designer and campaign creative director.",
   /**
    * Availability pill in the header. Driven from config, not hardcoded.
    * Default false until confirmed.

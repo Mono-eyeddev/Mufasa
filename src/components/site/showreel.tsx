@@ -107,7 +107,7 @@ export function Showreel() {
         </div>
 
         <span className="font-mono text-[9px] tracking-[0.2em] text-white/50">
-          MUFASA® — CREATIVE ARCHIVE
+          OGINGA® : CREATIVE ARCHIVE
         </span>
       </div>
 

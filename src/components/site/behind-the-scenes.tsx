@@ -67,7 +67,7 @@ export function BehindTheScenes() {
 
       {/* Bottom label */}
       <div className="mx-auto mt-8 flex max-w-[1600px] items-center justify-between gap-4 font-mono text-[10px] tracking-[0.2em] text-paper/55">
-        <span>MUFASA® — ON LOCATION</span>
+        <span>OGINGA® : ON LOCATION</span>
         <span>THE PROCESS / 001</span>
       </div>
     </section>

@@ -148,7 +148,7 @@ function InteractiveContactCard() {
           {/* Header */}
           <div className="flex items-center justify-between">
             <p className="mono-label text-[#ECE7DC]/50">
-              MUFASA® / PORTFOLIO
+              OGINGA® / PORTFOLIO
             </p>
 
             <span className="mono-label text-[#FD802E]/70">

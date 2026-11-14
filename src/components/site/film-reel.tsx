@@ -712,7 +712,7 @@ export function PassageGallery({
           </motion.div>
 
           <p className="mono-label hidden text-[10px] tracking-[0.3em] opacity-60 sm:block">
-            MUFASA® / FILM ARCHIVE
+            OGINGA® / FILM ARCHIVE
           </p>
         </div>
 

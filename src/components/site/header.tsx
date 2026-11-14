@@ -175,7 +175,7 @@ export function SiteHeader() {
           <Link
             href="/"
             className="font-display text-[22px] leading-none text-paper transition-colors duration-300 hover:text-[#FD802E] md:text-2xl"
-            aria-label="MUFASA® — home"
+            aria-label="OGINGA®: home"
           >
             OGINGA
             <span className="align-super text-[0.55em] leading-none text-[#FD802E]">

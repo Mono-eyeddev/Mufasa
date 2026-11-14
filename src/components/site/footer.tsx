@@ -66,7 +66,7 @@ export default function Footer() {
         <div className="grid grid-cols-2 gap-12 border-t border-paper/15 py-12 md:grid-cols-4 md:gap-8">
           <div className="col-span-2 md:col-span-1">
             <p className="font-display text-3xl tracking-tight">
-              MUFASA<span className="text-pumpkin">®</span>
+              OGINGA<span className="text-pumpkin">®</span>
             </p>
             <p className="mono-label mt-3 max-w-48 leading-relaxed text-paper/45">
               VISUAL STORIES.
@@ -129,7 +129,7 @@ export default function Footer() {
         {/* Bottom strip */}
         <div className="flex flex-col justify-between gap-4 border-t border-paper/15 py-6 sm:flex-row sm:items-center">
           <p className="mono-label text-paper/40">
-            © {new Date().getFullYear()} VICTOR OGINGA — MUFASA®
+            © {new Date().getFullYear()} OGINGA®
           </p>
 
           <div className="flex items-center gap-2">

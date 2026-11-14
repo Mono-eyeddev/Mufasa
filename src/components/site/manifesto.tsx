@@ -243,7 +243,7 @@ export function Manifesto({ lenses = [], frames }) {
                 <div className="grid h-full w-full place-items-center p-4 text-center">
                   <div>
                     <span className="mb-3 block font-mono text-[10px] tracking-[0.25em] text-[#FD802E]">
-                      MUFASA®
+                      OGINGA®
                     </span>
                     <span className="font-mono text-xs tracking-widest text-[#ECE7DC]/40">
                       {frame.label}

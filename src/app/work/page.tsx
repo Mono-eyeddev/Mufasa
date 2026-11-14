@@ -6,7 +6,7 @@ import { Contact } from "@/components/site/contact";
 export const metadata: Metadata = {
   title: "Work — the full archive",
   description:
-    "The complete MUFASA® archive — photography, graphic design, film, branding and campaign work by Victor Oginga.",
+    "The complete OGINGA® archive: photography, graphic design, film, branding and campaign work by Victor Oginga.",
 };
 
 export default async function WorkPage({

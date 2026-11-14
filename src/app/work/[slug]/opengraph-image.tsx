@@ -49,7 +49,7 @@ export default async function ProjectOgImage({ params }: { params: Promise<{ slu
           }}
         >
           <div style={{ display: "flex", fontSize: 20, letterSpacing: "0.08em", opacity: 0.6 }}>
-            MUFASA® — {project ? project.discipline.map((d) => DISCIPLINE_LABEL[d]).join(" · ") : "Work"}
+            OGINGA® : {project ? project.discipline.map((d) => DISCIPLINE_LABEL[d]).join(" · ") : "Work"}
           </div>
           <div
             style={{
