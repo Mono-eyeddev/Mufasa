@@ -89,6 +89,9 @@
 }
 
 html {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
   scroll-behavior: smooth;
 }
 
@@ -106,6 +109,9 @@ html {
 }
 
 body {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
   background: var(--color-ink);
   color: var(--color-paper);
   font-family: var(--font-body), "Hanken Grotesk", system-ui, sans-serif;

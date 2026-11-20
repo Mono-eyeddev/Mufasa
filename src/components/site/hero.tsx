@@ -11,6 +11,7 @@ import {
 } from "framer-motion";
 import { RotatingBadge } from "./rotating-badge";
 
+
 export interface HeroSlide {
   src: string;
   alt: string;
@@ -241,15 +242,14 @@ export function Hero() {
     <section
       aria-label="Introduction"
       id="home"
-      className="band-ink relative isolate min-h-[900px] overflow-hidden px-gutter pb-16 pt-10 text-paper md:min-h-[850px] lg:min-h-[100svh] lg:pb-20 lg:pt-12"
+      className="band-ink relative isolate min-h-[900px] overflow-hidden px-gutter pb-16 pt-16 text-paper md:min-h-[850px] lg:min-h-[100svh] lg:pb-20 lg:pt-12"
     >
       
-      {/* Animated Acid Darkroom atmosphere */}
 <div
   aria-hidden="true"
   className="pointer-events-none absolute inset-0 -z-10 overflow-hidden"
 >
-  {/* Lime ambient glow */}
+
   <motion.div
     animate={{
       scale: [1, 1.2, 1],
@@ -319,7 +319,7 @@ export function Hero() {
       <div className="relative z-10 mx-auto grid min-h-[790px] max-w-[1800px] grid-cols-1 gap-12 lg:min-h-[calc(100svh-80px)] lg:grid-cols-[1.45fr_0.75fr] lg:items-center lg:gap-10">
 
         {/* LEFT — Image, signature and introduction */}
-        <div className="relative flex min-h-[680px] flex-col justify-between lg:min-h-[720px]">
+        <div className="relative flex min-h-[680px] flex-col justify-start lg:min-h-[720px]">
 
           {/* Top introduction */}
           <div className="relative z-30 flex items-start justify-between gap-6">
@@ -340,99 +340,86 @@ export function Hero() {
             </div>
           </div>
 
-          {/* Portrait composition */}
-          <div className="pointer-events-none absolute inset-x-0 top-[12%] z-10 flex h-[430px] items-center justify-center md:h-[500px] lg:inset-x-[8%] lg:top-[3%] lg:h-[590px]">
 
-            {/* Lime atmospheric glow */}
-            <div className="absolute left-[25%] top-[25%] h-[220px] w-[220px] rounded-full bg-signal/[0.13] blur-[85px] md:h-[300px] md:w-[300px]" />      
-{/* Floating MUFASA Portrait */}
- <motion.div
-  animate={
-    reduce
-      ? undefined
-      : {
-          y: [0, -14, 0, 14, 0],
-          rotate: [0, 0.6, 0, -0.6, 0],
-        }
-  }
-  transition={{
-    duration: 7,
-    repeat: Infinity,
-    ease: "easeInOut",
-  }}
-  className="relative h-full w-[68%] max-w-[410px] overflow-hidden"
->
-  <Image
-    src="https://res.cloudinary.com/lbs3zryh/image/upload/v1793447549/mufxsa.png"
-    alt="Victor Oginga — MUFASA®"
-    fill
-    priority
-    sizes="(min-width: 1024px) 410px, 68vw"
-    className="object-contain object-bottom"
-  />
-</motion.div>
+{/* Portrait composition */}
+<div className="pointer-events-none absolute inset-x-0 top-[12%] z-10 flex h-[430px] items-center justify-center md:h-[500px] lg:inset-x-[8%] lg:top-[3%] lg:h-[590px]">
 
-            
-            
-          
-        
-          </div>
+  <div className="absolute left-1/2 top-[25%] h-[220px] w-[220px] -translate-x-1/2 rounded-full bg-signal/[0.13] blur-[85px] md:h-[300px] md:w-[300px] lg:left-[25%] lg:translate-x-0" />
 
-          {/* Bottom introduction and main headline */}
-          <div className="relative z-30 mt-[390px] md:mt-[440px] lg:mt-[470px]">
-            <p className="mono-label mb-5 flex items-center gap-3 text-paper/65">
-              <span className="h-2 w-2 rounded-full bg-signal" />
-              VICTOR OGINGA: OGINGA®
-            </p>
+  {/* Floating MUFASA Portrait */}
+  <motion.div
+    animate={
+      reduce
+        ? undefined
+        : {
+            y: [0, -14, 0, 14, 0],
+            rotate: [0, 0.6, 0, -0.6, 0],
+          }
+    }
+    transition={{
+      duration: 7,
+      repeat: Infinity,
+      ease: "easeInOut",
+    }}
+    className="relative h-full w-[85%] max-w-[410px] translate-x-5 overflow-hidden md:w-[68%] md:translate-x-4 lg:translate-x-0"
+  >
+    <Image
+      src="https://res.cloudinary.com/lbs3zryh/image/upload/v1793447549/mufxsa.png"
+      alt="Victor Oginga — MUFASA®"
+      fill
+      priority
+      sizes="(min-width: 1024px) 410px, 85vw"
+      className="object-contain object-bottom"
+    />
+  </motion.div>
+</div>
 
-            <h1 className="max-w-[1050px] font-display text-[clamp(3.1rem,8.2vw,8.8rem)] uppercase leading-[0.82] tracking-[-0.045em] text-paper">
-              Photography,
-              <br />
-              Design <span className="serif-accent text-signal">&</span> Film.
-            </h1>
+{/* Bottom introduction and main headline */}
+<div className="relative z-30 mt-[390px] text-center md:mt-[440px] lg:mt-[470px] lg:text-left">
 
-            <div className="mt-8 flex flex-wrap items-center gap-4">
-              <a
-                href="/work"
-                className="group inline-flex min-h-12 items-center gap-5 rounded-full bg-signal px-6 py-3 mono-label text-ink transition-all duration-300 hover:shadow-[0_0_30px_rgba(204,255,0,0.22)]"
-              >
-                EXPLORE WORK
-                <span className="text-lg transition-transform duration-300 group-hover:translate-x-1">
-                  →
-                </span>
-              </a>
+  <p className="mono-label mb-5 flex items-center justify-center gap-3 text-paper/65 lg:justify-start">
+    <span className="h-2 w-2 rounded-full bg-signal" />
+    Hi, AM VICTOR OGINGA: OGINGA®
+  </p>
 
-              <a
-                href="#contact"
-                className="inline-flex min-h-12 items-center rounded-full border border-paper/35 px-6 py-3 mono-label text-paper transition-colors duration-300 hover:border-signal hover:text-signal"
-              >
-                START A PROJECT
-              </a>
-            </div>
-          </div>
-        </div>
+  <h1 className="mx-auto max-w-[1050px] font-display text-[clamp(3.1rem,8.2vw,8.8rem)] uppercase leading-[0.82] tracking-[-0.045em] text-paper lg:mx-0">
+    Photography,
+    <br />
+    Design <span className="serif-accent text-signal">&</span> Film.
+  </h1>
 
+  <div className="mt-8 flex flex-nowrap items-center justify-center gap-2 sm:gap-4 lg:justify-start">
+    <a
+      href="/work"
+      className="group inline-flex min-h-12 shrink-0 items-center gap-3 rounded-full bg-signal px-4 py-3 mono-label text-ink transition-all duration-300 hover:shadow-[0_0_30px_rgba(253,128,46,0.22)] sm:gap-5 sm:px-6"
+    >
+      EXPLORE WORK
+      <span className="text-lg transition-transform duration-300 group-hover:translate-x-1">→</span>
+    </a>
 
+    <a
+      href="#contact"
+     className="group relative isolate inline-flex min-h-12 shrink-0 items-center overflow-hidden rounded-full border border-white/15 bg-white/[0.06] px-4 py-3 mono-label text-paper shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_8px_30px_rgba(0,0,0,0.18)] backdrop-blur-xl transition-all duration-300 hover:border-signal/50 hover:bg-white/[0.09] hover:text-signal sm:px-6"
+    >
+      <span
+  aria-hidden="true"
+  className="pointer-events-none absolute inset-0 -z-10 rounded-full bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.16),transparent_65%)]"
+/>
+      START A PROJECT <span
+  aria-hidden="true"
+  className="pointer-events-none absolute inset-0 rounded-full ring-1 ring-inset ring-white/[0.04]"
+/>
+    </a>
+  </div>
+</div>
+</div>
        {/* RIGHT — Interactive 3D contact card */}
 <div className="relative z-30 flex items-center justify-center lg:justify-end">
   <InteractiveContactCard />
 </div>
       </div>
 
-      {/* Bottom page marker */}
-      <div className="relative z-20 mt-20 flex items-center justify-between border-t border-paper/15 pt-5">
-        <p className="mono-label text-paper/45">
-          CREATIVE MINDS / VISUAL STORIES
-        </p>
-
-        <a
-          href="#manifesto"
-          className="mono-label flex items-center gap-3 text-paper/65 transition-colors hover:text-signal"
-        >
-          SCROLL TO EXPLORE
-          <span className="text-lg">↓</span>
-        </a>
-      </div>
+ 
     </section>
   );
 }

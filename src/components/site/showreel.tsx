@@ -39,6 +39,7 @@ export function Showreel() {
       id="showreel"
       className="relative isolate overflow-hidden bg-[#080808]"
     >
+      
       {/* Video */}
       <video
         ref={videoRef}
@@ -51,7 +52,7 @@ export function Showreel() {
         onLoadedMetadata={(event) =>
           setDuration(formatDuration(event.currentTarget.duration))
         }
-        className="block aspect-video w-full object-cover"
+        className="block h-[65svh] min-h-[420px] max-h-[700px] w-full object-cover md:aspect-video md:h-auto md:min-h-0 md:max-h-none"
       >
         <source src={PLACEHOLDER_VIDEO} type="video/mp4" />
       </video>

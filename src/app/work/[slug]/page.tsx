@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getAdjacentProjects, getProjectBySlug, getProjectSlugs } from "@/lib/content";
 import { ProjectView } from "@/components/site/project-view";
-import { FooterWordmark } from "@/components/site/contact";
+import Footer from "@/components/site/footer";
 import { DISCIPLINE_LABEL } from "@/content/types";
 import { siteConfig } from "@/content/site";
 
@@ -28,5 +28,16 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   };
 }
 
+export default async function ProjectPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const project = getProjectBySlug(slug);
+  if (!project) notFound();
+  const { next } = getAdjacentProjects(slug);
 
-
+  return (
+    <>
+      <ProjectView project={project} next={next!} />
+      <Footer />
+    </>
+  );
+}

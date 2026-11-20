@@ -32,7 +32,7 @@ export const siteConfig = {
   socials: [
   {
     label: "WhatsApp",
-    href: "YOUR_WHATSAPP_LINK",
+    href: "https://wa.me/254714436683?text=Hi!%20I'd%20like%20to%20know%20more.",
   },
   {
     label: "YouTube",
@@ -40,7 +40,7 @@ export const siteConfig = {
   },
   {
     label: "Instagram",
-    href: "YOUR_INSTAGRAM_LINK",
+    href: "https://www.instagram.com/ogingamufasa?cnvx=MXNtdzdhcHVtanZhaA==",
   },
 ],
   /** Services offered — factual list, no pricing. */

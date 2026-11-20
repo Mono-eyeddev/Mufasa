@@ -4,7 +4,12 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import {
+  AnimatePresence,
+  motion,
+  useReducedMotion,
+} from "framer-motion";
+import { Menu, X, ArrowUpRight } from "lucide-react";
 import { siteConfig } from "@/content/site";
 import CaptureButton from "./capture-button";
 
@@ -35,7 +40,6 @@ export function SiteHeader() {
   const lastY = useRef(0);
   const ticking = useRef(false);
 
-  // Reset header visibility after route navigation.
   useEffect(() => {
     setHidden(false);
     lastY.current = window.scrollY;
@@ -68,9 +72,7 @@ export function SiteHeader() {
 
     window.addEventListener("scroll", onScroll, { passive: true });
 
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-    };
+    return () => window.removeEventListener("scroll", onScroll);
   }, [menuOpen]);
 
   // Track the active homepage section.
@@ -92,7 +94,6 @@ export function SiteHeader() {
         const readingPosition =
           scrollPosition + window.innerHeight * 0.38;
 
-        // Home is always active near the top.
         if (scrollPosition < 80) {
           setActiveSection("home");
           return;
@@ -100,7 +101,6 @@ export function SiteHeader() {
 
         let currentSection: string | null = null;
 
-        // Find the last section that has crossed the reading position.
         for (const item of NAV) {
           const section = document.getElementById(item.sectionId);
 
@@ -114,7 +114,6 @@ export function SiteHeader() {
           }
         }
 
-        // Keep Contact active at the bottom of the page.
         const atBottom =
           window.innerHeight + scrollPosition >=
           document.documentElement.scrollHeight - 10;
@@ -137,19 +136,16 @@ export function SiteHeader() {
 
     window.addEventListener("resize", updateActiveSection);
 
-    // Recheck after the page has completed its initial layout.
     const initialUpdate = window.setTimeout(updateActiveSection, 300);
 
     return () => {
       window.cancelAnimationFrame(frame);
       window.clearTimeout(initialUpdate);
-
       window.removeEventListener("scroll", updateActiveSection);
       window.removeEventListener("resize", updateActiveSection);
     };
   }, [pathname]);
 
-  // Determine which navigation item is active.
   const isActive = (item: NavItem) => {
     return pathname === "/" && activeSection === item.sectionId;
   };
@@ -165,7 +161,7 @@ export function SiteHeader() {
         }`}
       >
         <div
-          className={`flex h-14 items-center justify-between px-gutter transition-all duration-500 md:h-16 ${
+          className={`flex h-[60px] items-center justify-between px-gutter transition-all duration-500 md:h-16 ${
             scrolled && !menuOpen
               ? "border-b border-[#FD802E]/15 bg-[#233D4C]/90 shadow-[0_8px_30px_rgba(0,0,0,0.2)] backdrop-blur-xl"
               : "bg-transparent"
@@ -174,7 +170,7 @@ export function SiteHeader() {
           {/* Brand */}
           <Link
             href="/"
-            className="font-display text-[22px] leading-none text-paper transition-colors duration-300 hover:text-[#FD802E] md:text-2xl"
+            className="font-display text-[20px] leading-none text-paper transition-colors duration-300 hover:text-[#FD802E] md:text-2xl"
             aria-label="OGINGA®: home"
           >
             OGINGA
@@ -210,20 +206,27 @@ export function SiteHeader() {
             <CaptureButton />
           </nav>
 
-          {/* Mobile menu trigger */}
+          {/* Mobile / tablet menu trigger */}
           <button
             type="button"
-            className="mono-label inline-flex min-h-[44px] min-w-[44px] items-center justify-center text-paper transition-colors duration-300 hover:text-[#FD802E] md:hidden"
+            className="group inline-flex min-h-11 items-center gap-2 rounded-full border border-paper/15 bg-paper/[0.04] px-3.5 text-paper transition-all duration-300 hover:border-[#FD802E]/60 hover:bg-[#FD802E]/10 lg:hidden"
             aria-expanded={menuOpen}
             aria-controls="mobile-menu"
+            aria-label="Open navigation menu"
             onClick={() => setMenuOpen(true)}
           >
-            Menu
+            <span className="mono-label text-[10px] tracking-[0.16em] transition-colors group-hover:text-[#FD802E]">
+              MENU
+            </span>
+            <Menu
+              size={17}
+              strokeWidth={1.7}
+              className="transition-colors group-hover:text-[#FD802E]"
+            />
           </button>
         </div>
       </header>
 
-      {/* Mobile navigation overlay */}
       <AnimatePresence>
         {menuOpen && (
           <MenuOverlay onClose={() => setMenuOpen(false)} />
@@ -237,11 +240,12 @@ function MenuOverlay({ onClose }: { onClose: () => void }) {
   const panelRef = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
 
-  // Scroll lock, Escape key and keyboard focus management.
   useEffect(() => {
     const previousOverflow = document.body.style.overflow;
 
     document.body.style.overflow = "hidden";
+
+    const previousFocus = document.activeElement as HTMLElement | null;
 
     const firstElement =
       panelRef.current?.querySelector<HTMLElement>("a, button");
@@ -285,6 +289,7 @@ function MenuOverlay({ onClose }: { onClose: () => void }) {
     return () => {
       document.body.style.overflow = previousOverflow;
       document.removeEventListener("keydown", onKeyDown);
+      previousFocus?.focus();
     };
   }, [onClose]);
 
@@ -299,31 +304,30 @@ function MenuOverlay({ onClose }: { onClose: () => void }) {
       id="mobile-menu"
       role="dialog"
       aria-modal="true"
-      aria-label="Menu"
-      className="fixed inset-0 z-[60] flex flex-col overflow-y-auto bg-[#080808] text-paper"
+      aria-label="Navigation menu"
+      className="fixed inset-0 z-[60] flex h-[100dvh] min-h-0 flex-col overflow-x-hidden overflow-y-hidden bg-[#080808] text-paper"
       initial={reduce ? { opacity: 1 } : { opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={reduce ? { opacity: 1 } : { opacity: 0 }}
-      transition={{ duration: reduce ? 0 : 0.3 }}
+      transition={{ duration: reduce ? 0 : 0.25 }}
     >
-      {/* Petrol blue atmosphere */}
+      {/* Ambient atmosphere */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -right-32 top-20 h-96 w-96 rounded-full bg-[#233D4C]/45 blur-[120px]"
+        className="pointer-events-none absolute -right-32 top-16 h-72 w-72 rounded-full bg-[#233D4C]/40 blur-[100px]"
       />
 
-      {/* Orange ambient glow */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -left-40 bottom-20 h-80 w-80 rounded-full bg-[#FD802E]/10 blur-[120px]"
+        className="pointer-events-none absolute -left-32 bottom-24 h-64 w-64 rounded-full bg-[#FD802E]/10 blur-[100px]"
       />
 
-      {/* Mobile header */}
-      <div className="relative z-10 flex h-14 shrink-0 items-center justify-between border-b border-paper/10 px-gutter">
+      {/* Menu header */}
+      <div className="relative z-10 flex h-[60px] shrink-0 items-center justify-between border-b border-paper/10 px-gutter md:h-16">
         <Link
           href="/"
           onClick={onClose}
-          className="font-display text-[22px] leading-none"
+          className="font-display text-[20px] leading-none text-paper"
         >
           OGINGA
           <span className="align-super text-[0.55em] text-[#FD802E]">
@@ -334,32 +338,36 @@ function MenuOverlay({ onClose }: { onClose: () => void }) {
         <button
           type="button"
           onClick={onClose}
-          className="mono-label inline-flex min-h-[44px] min-w-[44px] items-center justify-center text-paper transition-colors hover:text-[#FD802E]"
+          aria-label="Close navigation menu"
+          className="group inline-flex min-h-11 items-center gap-2 rounded-full border border-paper/15 px-3.5 text-paper transition-colors hover:border-[#FD802E]/60 hover:text-[#FD802E]"
         >
-          Close
+          <span className="mono-label text-[10px] tracking-[0.16em]">
+            CLOSE
+          </span>
+          <X size={17} strokeWidth={1.7} />
         </button>
       </div>
 
-      {/* Navigation links */}
+      {/* Navigation */}
       <nav
         aria-label="Mobile"
-        className="relative z-10 mt-10 flex flex-col px-gutter"
+       className="relative z-10 ml-auto mr-0 min-h-0 w-full max-w-2xl flex-1 overflow-x-hidden overflow-y-auto overscroll-contain px-gutter pb-8 pt-5 text-right"
       >
+        <p className="mono-label mb-3 text-[9px] tracking-[0.22em] text-paper/35">
+          NAVIGATION / 001
+        </p>
+
         {items.map((item, index) => (
           <motion.div
             key={item.label}
-            initial={
-              reduce
-                ? { y: 0, opacity: 1 }
-                : { y: 40, opacity: 0 }
-            }
+            initial={reduce ? { y: 0, opacity: 1 } : { y: 14, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={
               reduce
                 ? { duration: 0 }
                 : {
-                    delay: 0.06 * index + 0.1,
-                    duration: 0.5,
+                    delay: 0.035 * index,
+                    duration: 0.35,
                     ease: [0.2, 0.8, 0.2, 1],
                   }
             }
@@ -367,32 +375,26 @@ function MenuOverlay({ onClose }: { onClose: () => void }) {
             <Link
               href={item.href}
               onClick={onClose}
-              className="group flex min-h-[64px] items-center justify-between border-b border-paper/15 py-3"
+              className="group flex min-h-[51px] flex-row-reverse items-center justify-between gap-4 border-b border-paper/10 py-2.5 text-right transition-colors duration-300 hover:border-[#FD802E]/40"
             >
-              <span className="font-display text-5xl leading-[0.9] text-paper transition-colors duration-300 group-hover:text-[#FD802E]">
+             <span className="min-w-0 break-words font-display text-[clamp(1.35rem,6vw,2.35rem)] leading-tight text-paper transition-colors duration-300 group-hover:text-[#FD802E]">
                 {item.label}
               </span>
 
-              <span className="mono-label text-[#FD802E]/60 transition-colors group-hover:text-[#FD802E]">
-                {String(index + 1).padStart(2, "0")}
-              </span>
+<span className="flex w-12 shrink-0 items-center justify-end gap-2">
+  <span className="mono-label text-[9px] tracking-[0.12em] text-paper/30 transition-colors group-hover:text-[#FD802E]">
+    {String(index + 1).padStart(2, "0")}
+  </span>
+  <ArrowUpRight
+    size={15}
+    strokeWidth={1.5}
+    className="text-[#FD802E]/50 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-[#FD802E]"
+  />
+</span>
             </Link>
           </motion.div>
         ))}
       </nav>
-
-      {/* Footer */}
-      <div className="relative z-10 mt-auto border-t border-paper/10 px-gutter pb-10 pt-6">
-        <p className="mono-label text-paper/50">
-          {siteConfig.email}
-        </p>
-
-        {siteConfig.availableForCommissions && (
-          <p className="mono-label mt-2 text-[#FD802E]">
-            ✱ Available for commissions
-          </p>
-        )}
-      </div>
     </motion.div>
   );
 }

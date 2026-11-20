@@ -122,7 +122,7 @@ export function About({ portrait }: { portrait: Media }) {
 
               <div className="mt-8 w-full space-y-5 text-[15px] leading-[1.9] text-paper/70 md:text-[16px]">
                 <p>
-                  Working under the name MUFASA®, I move between
+                  I move between
                   different creative disciplines to tell stories,
                   shape visual identities and create work that
                   connects with people.
@@ -346,11 +346,16 @@ export function About({ portrait }: { portrait: Media }) {
               />
 
               {/* Play button */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="flex size-16 items-center justify-center rounded-full border border-[#FD802E]/70 text-[#FD802E] transition-all duration-500 group-hover:scale-110 group-hover:bg-[#FD802E]/10 md:size-20">
-                  <span className="ml-1 text-2xl">▶</span>
-                </div>
-              </div>
+            {/* Play button + coming soon */}
+<div className="absolute inset-0 flex flex-col items-center justify-center gap-5">
+  <div className="flex size-16 items-center justify-center rounded-full border border-[#FD802E]/70 text-[#FD802E] transition-all duration-500 group-hover:scale-110 group-hover:bg-[#FD802E]/10 md:size-20">
+    <span className="ml-1 text-2xl">▶</span>
+  </div>
+
+  <span className="font-mono text-[9px] tracking-[0.3em] text-[#FD802E] md:text-[10px]">
+    REEL COMING SOON
+  </span>
+</div>
 
               {/* Minimal corner details */}
               <span className="mono-label absolute bottom-4 left-4 text-paper/40">

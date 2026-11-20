@@ -13,15 +13,32 @@ const ORANGE = "#FD802E";
 const NAVY = "#233D4C";
 
 const PLACEHOLDERS = [
-  { ratio: "3 / 4" },
-  { ratio: "3 / 2" },
-  { ratio: "4 / 5" },
-  { ratio: "16 / 10" },
-  { ratio: "3 / 4" },
-].map((frame, i) => ({
-  ...frame,
-  label: `Photograph ${String(i + 1).padStart(2, "0")}`,
-}));
+  {
+    src: "https://res.cloudinary.com/iqflnx83/image/upload/v1794316885/_MG_1051_result.webp",
+    ratio: "3 / 4",
+    alt: "MUFASA photography",
+  },
+  {
+    src: "https://res.cloudinary.com/iqflnx83/image/upload/f_auto,q_auto/v1794316492/front.png",
+    ratio: "3 / 2",
+    alt: "MUFASA creative work",
+  },
+  {
+    src: "https://res.cloudinary.com/iqflnx83/image/upload//f_auto,q_auto/_MG_7463_result.webp",
+    ratio: "4 / 5",
+    alt: "MUFASA portrait photography",
+  },
+  {
+    src: "https://res.cloudinary.com/iqflnx83/image/upload/f_auto,q_auto/v1794316688/bag.png",
+    ratio: "16 / 10",
+    alt: "MUFASA visual storytelling",
+  },
+  {
+    src: "https://res.cloudinary.com/iqflnx83/image/upload/f_auto,q_auto/v1794316350/REY02379_result.webp",
+    ratio: "3 / 4",
+    alt: "MUFASA photography",
+  },
+];
 
 
 

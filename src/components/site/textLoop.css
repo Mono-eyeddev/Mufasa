@@ -1,0 +1,30 @@
+.text-loop {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.text-loop-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.text-loop-text {
+  user-select: none;
+}
+
+.text-loop-measure {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* MUFASA hero marquee */
+.hero-text-loop .text-loop-svg {
+  width: 100%;
+  height: clamp(130px, 16vw, 190px);
+}
+
+.hero-text-loop .text-loop-text {
+  font-family: inherit;
+}
