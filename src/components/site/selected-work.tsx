@@ -1,56 +1,70 @@
 
 "use client";
 
-import Image from "next/image";
-import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import Link from "next/link";
+
 import StarBorder from "./StarBorder";
 import ChromaGrid from "./ChromaGrid";
+import { Reveal } from "./reveal";
 
 import {
-  DISCIPLINE_INDEX,
   DISCIPLINE_LABEL,
   DISCIPLINES,
   type Discipline,
   type Project,
 } from "@/content/types";
 
-import { Reveal } from "./reveal";
+import { projects as allProjects } from "@/content/projects";
+import { photographyCategories } from "@/content/photography";
 
 /* ───────────────────────── FILTERS ───────────────────────── */
 
 const FILTERS: { key: Discipline | "all"; label: string }[] = [
   { key: "all", label: "All" },
-  ...DISCIPLINES.map((d) => ({
-    key: d,
-    label: DISCIPLINE_LABEL[d],
+  ...DISCIPLINES.map((discipline) => ({
+    key: discipline,
+    label: DISCIPLINE_LABEL[discipline],
   })),
 ];
 
-const formatNumber = (value: number) =>
-  String(value).padStart(2, "0");
+/* Temporary category images for categories without uploaded covers. */
+
+const CATEGORY_PLACEHOLDERS: Record<string, string> = {
+  weddings:
+    "https://res.cloudinary.com/iqflnx83/image/upload/q_auto/f_auto/v1794391313/DSC04798_result.webp",
+  graduations:
+    "",
+  portraits:
+    "",
+  events:
+    "",
+};
 
 /* ───────────────────────── FILTER NAVIGATION ───────────────────────── */
-
 
 export function WorkFilterPills({
   projects,
   active,
   onChange,
+  photographyCount,
   idPrefix = "filter",
 }: {
   projects: Project[];
   active: Discipline | "all";
-  onChange: (d: Discipline | "all") => void;
+  onChange: (discipline: Discipline | "all") => void;
+  photographyCount: number;
   idPrefix?: string;
 }) {
   const counts = useMemo(() => {
     const map = new Map<string, number>();
 
-    for (const p of projects) {
-      for (const d of p.discipline) {
-        map.set(d, (map.get(d) ?? 0) + 1);
+    for (const project of projects) {
+      for (const discipline of project.discipline) {
+        map.set(
+          discipline,
+          (map.get(discipline) ?? 0) + 1
+        );
       }
     }
 
@@ -61,23 +75,22 @@ export function WorkFilterPills({
     <div
       role="group"
       aria-label="Filter projects by discipline"
-      className="
-        flex w-full flex-wrap
-        items-center justify-center gap-3
-      "
+      className="flex w-full flex-wrap items-center justify-center gap-3"
     >
-      {FILTERS.map((f) => {
+      {FILTERS.map((filter) => {
         const count =
-          f.key === "all"
+          filter.key === "all"
             ? projects.length
-            : counts.get(f.key) ?? 0;
+            : filter.key === "photography"
+              ? photographyCount
+              : counts.get(filter.key) ?? 0;
 
-        const isActive = active === f.key;
+        const isActive = active === filter.key;
 
         return (
           <StarBorder
-            key={f.key}
-            id={`${idPrefix}-${f.key}`}
+            key={filter.key}
+            id={`${idPrefix}-${filter.key}`}
             color="#F28C28"
             trailColor="#F28C28"
             duration={4}
@@ -95,12 +108,12 @@ export function WorkFilterPills({
             textColor="#ECE7DC"
             borderColor="#233D4C"
             className="
-  mono-label min-h-[36px] shrink-0
-  px-3 py-2 text-[10px] tracking-wider
-  transition-colors
-"
+              mono-label min-h-[36px] shrink-0
+              px-3 py-2 text-[10px] tracking-wider
+              transition-colors
+            "
             aria-pressed={isActive}
-            onClick={() => onChange(f.key)}
+            onClick={() => onChange(filter.key)}
           >
             <span className="flex items-center gap-2">
               {isActive && (
@@ -112,7 +125,7 @@ export function WorkFilterPills({
                 </span>
               )}
 
-              {f.label}
+              {filter.label}
 
               <span className="opacity-50">
                 ({count})
@@ -125,24 +138,20 @@ export function WorkFilterPills({
   );
 }
 
-
-
-
-
 /* ───────────────────────── SELECTED WORK ───────────────────────── */
 
 export function SelectedWork({
-  projects,
+  projects = [],
   initialDiscipline,
 }: {
-  projects: Project[];
+  projects?: Project[];
   initialDiscipline?: string | null;
 }) {
-  const reduce = useReducedMotion();
+  /* Use supplied projects, or fall back to the main content source. */
+  const sourceProjects =
+    projects.length > 0 ? projects : allProjects;
 
-  const [active, setActive] = useState<
-    Discipline | "all"
-  >(
+  const [active, setActive] = useState<Discipline | "all">(
     initialDiscipline &&
       (DISCIPLINES as string[]).includes(initialDiscipline)
       ? (initialDiscipline as Discipline)
@@ -154,32 +163,28 @@ export function SelectedWork({
     y: number;
   } | null>(null);
 
-  const [finePointer, setFinePointer] = useState(
-    () =>
-      typeof window !== "undefined" &&
-      window.matchMedia(
-        "(hover: hover) and (pointer: fine)"
-      ).matches
-  );
+  const [finePointer, setFinePointer] = useState(false);
 
   const sectionRef = useRef<HTMLElement>(null);
 
-  /* Filter + URL state */
-  const change = (d: Discipline | "all") => {
-    setActive(d);
+  /* ───────────────────────── FILTER + URL STATE ───────────────────────── */
+
+  const change = (discipline: Discipline | "all") => {
+    setActive(discipline);
 
     const url = new URL(window.location.href);
 
-    if (d === "all") {
+    if (discipline === "all") {
       url.searchParams.delete("discipline");
     } else {
-      url.searchParams.set("discipline", d);
+      url.searchParams.set("discipline", discipline);
     }
 
     window.history.replaceState(null, "", url);
   };
 
-  /* Cursor-following View label */
+  /* ───────────────────────── POINTER DETECTION ───────────────────────── */
+
   useEffect(() => {
     const mq = window.matchMedia(
       "(hover: hover) and (pointer: fine)"
@@ -196,23 +201,20 @@ export function SelectedWork({
     sync();
     mq.addEventListener("change", sync);
 
-    const onMove = (e: MouseEvent) => {
-      if (!mq.matches || reduce) return;
-
-      const rect =
-        sectionRef.current?.getBoundingClientRect();
+    const onMove = (event: MouseEvent) => {
+      const rect = sectionRef.current?.getBoundingClientRect();
 
       if (!rect) return;
 
       const inside =
-        e.clientY >= rect.top &&
-        e.clientY <= rect.bottom &&
-        e.clientX >= rect.left &&
-        e.clientX <= rect.right;
+        event.clientY >= rect.top &&
+        event.clientY <= rect.bottom &&
+        event.clientX >= rect.left &&
+        event.clientX <= rect.right;
 
       setCursor(
         inside
-          ? { x: e.clientX, y: e.clientY }
+          ? { x: event.clientX, y: event.clientY }
           : null
       );
     };
@@ -225,27 +227,75 @@ export function SelectedWork({
       window.removeEventListener("mousemove", onMove);
       mq.removeEventListener("change", sync);
     };
-  }, [reduce]);
+  }, []);
+
+  /* ───────────────────────── FILTERED PROJECTS ───────────────────────── */
 
   const filtered =
     active === "all"
-      ? projects
-      : projects.filter((p) =>
-          p.discipline.includes(active)
+      ? sourceProjects
+      : sourceProjects.filter((project) =>
+          project.discipline.includes(active)
         );
+
+  /* ───────────────────────── PHOTOGRAPHY CATEGORIES ───────────────────────── */
+
+  const photographyItems = photographyCategories.map(
+    (category) => {
+      const cover =
+        category.cover ??
+        category.collections[0]?.cover;
+
+      return {
+        image:
+          cover?.src ??
+          CATEGORY_PLACEHOLDERS[category.slug] ??
+          CATEGORY_PLACEHOLDERS.weddings,
+        alt:
+          cover?.alt ??
+          `${category.title} photography`,
+        title: category.title,
+        subtitle: `${category.collections.length} ${
+          category.collections.length === 1
+            ? "collection"
+            : "collections"
+        }`,
+        accent: "#F28C28",
+        url: `/photography/${category.slug}`,
+      };
+    }
+  );
+
+  /* ───────────────────────── CHROMA GRID ITEMS ───────────────────────── */
+
+  const gridItems =
+    active === "photography"
+      ? photographyItems
+      : filtered.map((project) => ({
+          image: project.cover.src,
+          alt: project.cover.alt,
+          title: project.title,
+          subtitle: `${
+            project.discipline[0]
+              ? DISCIPLINE_LABEL[project.discipline[0]]
+              : "Creative"
+          }${project.year ? ` — ${project.year}` : ""}`,
+          accent: "#F28C28",
+          url: `/work/${project.slug}`,
+        }));
+
+  /* ───────────────────────── RENDER ───────────────────────── */
 
   return (
     <section
       ref={sectionRef}
       id="work"
       aria-labelledby="work-heading"
-      className=" band-ink px-gutter pt-20 pb-24 text-paper"
+      className="band-ink px-gutter pt-20 pb-24 text-paper"
     >
       {/* Section heading */}
-      <div className="
-        flex flex-wrap items-end
-        justify-between gap-6
-      ">
+
+      <div className="flex flex-wrap items-end justify-between gap-6">
         <Reveal>
           <p className="mono-label text-paper/50">
             ( Selected work )
@@ -253,21 +303,16 @@ export function SelectedWork({
 
           <h2
             id="work-heading"
-            className="
-              font-display mt-6
-              text-6xl md:text-7xl
-            "
+            className="font-display mt-6 text-6xl md:text-7xl"
           >
             The work
-            <span className="text-signal neon-text">
-              .
-            </span>
+            <span className="text-signal neon-text">.</span>
           </h2>
         </Reveal>
 
         <Reveal delay={0.08}>
           <Link
-            href="/work"
+            href="/photography"
             className="
               mono-label link-underline-accent
               link-underline-neon text-paper
@@ -279,66 +324,58 @@ export function SelectedWork({
       </div>
 
       {/* Filters */}
+
       <Reveal delay={0.12} className="mt-10">
         <WorkFilterPills
-          projects={projects}
+          projects={sourceProjects}
           active={active}
           onChange={change}
+          photographyCount={photographyCategories.length}
           idPrefix="home-filter"
         />
       </Reveal>
 
-      {/* Uniform project grid */}
-{/* Chroma project grid */}
-<ChromaGrid
-  items={filtered.map((project) => {
-    const discipline = project.discipline[0];
+      {/* ChromaGrid */}
 
-    return {
-      image: project.cover.src,
-      alt: project.cover.alt,
-      title: project.title,
-      subtitle: `${DISCIPLINE_LABEL[discipline]}${
-        project.year ? ` — ${project.year}` : ""
-      }`,
-      accent: "#F28C28",
-      url: `/work/${project.slug}`,
-    };
-  })}
-  columns={3}
-  minCardWidth={180}
-  gap={24}
-  radius={260}
-  softness={0.65}
-  damping={0.45}
-  grayscale={1}
-  dim={0.08}
-  glow={0.5}
-  borderGlow={1}
-  aspectRatio="4 / 3"
-  cardRadius={2}
-  showInfo
-  theme="dark"
-  className="mt-12"
-/>
+      <ChromaGrid
+        items={gridItems}
+        columns={3}
+        minCardWidth={180}
+        gap={24}
+        radius={260}
+        softness={0.65}
+        damping={0.45}
+        grayscale={1}
+        dim={0.08}
+        glow={0.5}
+        borderGlow={1}
+        aspectRatio="4 / 3"
+        cardRadius={2}
+        showInfo
+        theme="dark"
+        className="mt-12"
+      />
 
       {/* Empty filter state */}
-      {filtered.length === 0 && (
-        <div className="
-          flex min-h-[220px] flex-col
-          items-center justify-center
-          border-b border-paper/15 text-center
-        ">
-          <span className="
-            font-display text-5xl text-paper/20
-          ">
+
+      {active !== "photography" && filtered.length === 0 && (
+        <div
+          className="
+            flex min-h-[220px] flex-col
+            items-center justify-center
+            border-b border-paper/15 text-center
+          "
+        >
+          <span className="font-display text-5xl text-paper/20">
             00
           </span>
 
-          <p className="
-            mono-label mt-3 text-[10px]
-            tracking-[0.2em] text-paper/45
-          ">
+          <p
+            className="
+              mono-label mt-3 text-[10px]
+              tracking-[0.2em] text-paper/45
+            "
+          >
             NO PROJECTS IN THIS CATEGORY
           </p>
 
@@ -357,7 +394,8 @@ export function SelectedWork({
       )}
 
       {/* Cursor-following View label */}
-      {finePointer && cursor && !reduce && (
+
+      {finePointer && cursor && (
         <div
           aria-hidden="true"
           className="

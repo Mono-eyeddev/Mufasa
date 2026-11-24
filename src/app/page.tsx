@@ -144,38 +144,12 @@ export default async function HomePage({
     <>
       <Hero />
 
-      <Manifesto
-        lenses={[
-          {
-            discipline: "photography",
-            label: "Photography",
-            index: "01",
-            blurb: "Portraits, streets and still life — shot on film, graded warm.",
-            media: pool.photo6,
-          },
-          {
-            discipline: "graphic-design",
-            label: "Graphic Design",
-            index: "02",
-            blurb: "Posters, spreads and print systems on strict grids.",
-            media: pool.design1,
-          },
-          {
-            discipline: "film",
-            label: "Film",
-            index: "03",
-            blurb: "Short films with long holds and practical light.",
-            media: pool.film2,
-          },
-        ]}
-      />
+      <Manifesto />
 
       {/* Temporary cinematic showreel section */}
       <Showreel />
       <About portrait={pool.portrait} />
-      <SelectedWork
-        projects={getHomeGrid()}
-        initialDiscipline={discipline ?? null}/>
+      <SelectedWork initialDiscipline={discipline ?? null} />
       <FilmReel films={films} />
       <Services rows={serviceRows} />
       <BehindTheScenes />

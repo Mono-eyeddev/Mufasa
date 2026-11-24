@@ -281,13 +281,26 @@ export const ChromaGrid = ({
             </a>
           ) : (
             <article
-              key={key}
-              className="chroma-card"
-              data-chroma-area=""
-              style={cardStyle}
-            >
-              {body}
-            </article>
+  key={key}
+  className="chroma-card"
+  data-chroma-area=""
+  style={{ ...cardStyle, cursor: item.onClick ? "pointer" : undefined }}
+  role={item.onClick ? "button" : undefined}
+  tabIndex={item.onClick ? 0 : undefined}
+  aria-label={item.onClick ? `View ${item.title}` : undefined}
+  onClick={item.onClick}
+  onKeyDown={(event) => {
+    if (
+      item.onClick &&
+      (event.key === "Enter" || event.key === " ")
+    ) {
+      event.preventDefault();
+      item.onClick();
+    }
+  }}
+>
+  {body}
+</article>
           );
 
         })}
